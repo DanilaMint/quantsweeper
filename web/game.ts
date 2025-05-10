@@ -1,4 +1,4 @@
-import { ToolType, Position, GameConfig, positionFromJSON } from "./static";
+import { ToolType, Position, GameConfig, debugMessage, toolTypeAsString } from "./static";
 import init, { ExternalField, TileStatus } from '../pkg/quantswepeer.js';
 import { GUI } from "./gui";
 
@@ -15,11 +15,13 @@ class Game {
     private currentTool: ToolType = ToolType.Shovel;
 
     constructor(private readonly gui: GUI) {
+        debugMessage(`Initializing game...`);
         this.initializeEventHandlers();
         this.loadField();
     }
 
     private initializeEventHandlers(): void {
+        debugMessage('Creating event handlers...');
         this.gui.onNewGame.connect(config => this.startNewGame(config));
         this.gui.onCellInteract.connect(pos => this.handleTileInteraction(pos));
         this.gui.onMeasure.connect(() => this.measureQuantFlags());
@@ -27,16 +29,19 @@ class Game {
     }
 
     private changeTool(tool : ToolType): void {
+        debugMessage(`Change tool to ${toolTypeAsString(tool)}`);
         this.currentTool = tool;
     }
 
     private startNewGame(config: GameConfig): void {
+        debugMessage(`Starting new game... Config = ${config}`);
         this.initializeGameState(config);
         this.gui.createGameBoard(config.width, config.height);
         this.gui.setQuantFlagCount(this.quantFlags);
     }
 
     private initializeGameState(config: GameConfig): void {
+        debugMessage(`Initializing game stats...`);
         this.config = config;
         this.field = new ExternalField(config.width, config.height);
         this.quantFlags = Math.round(config.width * config.height * config.groups * 0.013);
@@ -81,26 +86,29 @@ class Game {
     }
 
     private processTileOpening(pos: Position): void {
-        this.__openTile(pos);
-        const result = this.field!.multiOpenTiles(pos.x, pos.y);
-        const parsed = JSON.parse(`[${result}]`) as Position[];
+        const mine = this.__openTile(pos);
+        if (!mine) {
+            const result = this.field!.multiOpenTiles(pos.x, pos.y);
+            const parsed = JSON.parse(`[${result}]`) as Position[];
         
-        this.openedTiles.push(...parsed);
-        this.openedTiles = this.getUniquePositions(this.openedTiles);
-        this.updateProbabilities();
+            this.openedTiles.push(...parsed);
+            this.openedTiles = this.getUniquePositions(this.openedTiles);
+            this.updateProbabilities();
+        }
     }
 
-    private __openTile(pos: Position): void {
+    private __openTile(pos: Position): boolean {
         this.openedTiles.push(pos);
-        this.field!.openTile(pos.x, pos.y);
+        this.field.openTile(pos.x, pos.y);
         
         if (this.field!.getTileProb(pos.x, pos.y) >= 12) {
             this.gui.setCellMine(pos.x, pos.y);
             this.gameOver();
-            return;
+            return true;
         }
         
         this.updateProbabilities();
+        return false;
     }
 
     private gameOver(): void {

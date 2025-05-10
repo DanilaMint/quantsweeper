@@ -1,7 +1,7 @@
 import { Textures } from "./textures";
 import { Signal } from "./signal";
 import { CellManager } from "./cell-manager";
-import { ToolType, GameConfig, Position } from "./static";
+import { ToolType, GameConfig, Position, debugMessage } from "./static";
 
 export class GUI {
     public readonly onToolChanged = new Signal<ToolType>();
@@ -72,6 +72,7 @@ export class GUI {
     }
 
     public setCellMine(x: number, y: number): void {
+        debugMessage(`Cell to mine: x=${x}; y=${y}`);
         this.cellManager.updateCellContent(x, y, Textures.MINE_CELL);
     }
 

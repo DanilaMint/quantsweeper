@@ -1,3 +1,4 @@
+import { debugMessage } from "./static";
 import { Textures } from "./textures";
 
 export class CellManager {
@@ -42,6 +43,7 @@ export class CellManager {
     }
 
     public updateCellContent(x: number, y: number, content: string): void {
+        debugMessage(`updateCellContent(x: ${x}, y: ${y}, content: ${content})`);
         const cellContent = this.getCellContentElement(x, y);
         if (cellContent) {
             cellContent.innerHTML = content;

@@ -30,7 +30,6 @@ impl ExternalField {
 
     #[wasm_bindgen]
     pub fn generate(&mut self, first_click_x: i32, first_click_y: i32, groups: f64, candidates: f64) -> Result<(), JsValue> {
-        web_sys::console::log_1(&"Entering generate".into());
         match self.inner.generate(first_click_x, first_click_y, groups, candidates) {
             Ok(_) => Ok(()),
             Err(e) => Err(JsValue::from_str(&e)),
