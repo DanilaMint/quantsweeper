@@ -1,0 +1,207 @@
+import { ToolType, Position, GameConfig, positionFromJSON } from "./static";
+import init, { ExternalField, TileStatus } from '../pkg/quantswepeer.js';
+import { GUI } from "./gui";
+
+const initWasm = init;
+
+class Game {
+    private field: ExternalField | null = null;
+    private quantFlags: number = 0;
+    private openedTiles: Position[] = [];
+    private quantedTiles: Position[] = [];
+    private firstClick: boolean = true;
+    private config: GameConfig | null = null;
+    private isGameOver: boolean = true;
+    private currentTool: ToolType = ToolType.Shovel;
+
+    constructor(private readonly gui: GUI) {
+        this.initializeEventHandlers();
+        this.loadField();
+    }
+
+    private initializeEventHandlers(): void {
+        this.gui.onNewGame.connect(config => this.startNewGame(config));
+        this.gui.onCellInteract.connect(pos => this.handleTileInteraction(pos));
+        this.gui.onMeasure.connect(() => this.measureQuantFlags());
+        this.gui.onToolChanged.connect(tool => this.changeTool(tool));
+    }
+
+    private changeTool(tool : ToolType): void {
+        this.currentTool = tool;
+    }
+
+    private startNewGame(config: GameConfig): void {
+        this.initializeGameState(config);
+        this.gui.createGameBoard(config.width, config.height);
+        this.gui.setQuantFlagCount(this.quantFlags);
+    }
+
+    private initializeGameState(config: GameConfig): void {
+        this.config = config;
+        this.field = new ExternalField(config.width, config.height);
+        this.quantFlags = Math.round(config.width * config.height * config.groups * 0.013);
+        this.openedTiles = [];
+        this.quantedTiles = [];
+        this.firstClick = true;
+        this.isGameOver = false;
+    }
+
+    private handleTileInteraction(pos: Position): void {
+        if (!this.field || this.isGameOver) return;
+
+        switch (this.currentTool) {
+            case ToolType.Shovel: 
+                this.openTile(pos); 
+                break;
+            case ToolType.SimpleFlag:
+            case ToolType.QuantFlag: 
+                this.toggleFlag(pos); 
+                break;
+        }
+    }
+
+    private openTile(pos: Position): void {
+        if (!this.field || !this.config) return;
+
+        if (this.firstClick) {
+            this.generateField(pos);
+            this.firstClick = false;
+        }
+
+        this.processTileOpening(pos);
+    }
+
+    private generateField(pos: Position): void {
+        this.field!.generate(
+            pos.x, 
+            pos.y, 
+            this.config!.groups / 100, 
+            this.config!.candidates / 100
+        );
+    }
+
+    private processTileOpening(pos: Position): void {
+        this.__openTile(pos);
+        const result = this.field!.multiOpenTiles(pos.x, pos.y);
+        const parsed = JSON.parse(`[${result}]`) as Position[];
+        
+        this.openedTiles.push(...parsed);
+        this.openedTiles = this.getUniquePositions(this.openedTiles);
+        this.updateProbabilities();
+    }
+
+    private __openTile(pos: Position): void {
+        this.openedTiles.push(pos);
+        this.field!.openTile(pos.x, pos.y);
+        
+        if (this.field!.getTileProb(pos.x, pos.y) >= 12) {
+            this.gui.setCellMine(pos.x, pos.y);
+            this.gameOver();
+            return;
+        }
+        
+        this.updateProbabilities();
+    }
+
+    private gameOver(): void {
+        this.isGameOver = true;
+    }
+
+    private toggleFlag(pos: Position): void {
+        if (!this.field || this.firstClick || this.isGameOver) return;
+
+        const tile = this.field.getTileData(pos.x, pos.y);
+        if (!tile) return;
+
+        switch (tile.status) {
+            case TileStatus.Opened:
+                return;
+
+            case TileStatus.Flag:
+                this.removeFlag(pos);
+                break;
+
+            case TileStatus.QuantFlag:
+                this.removeQuantFlag(pos);
+                break;
+
+            case TileStatus.None:
+                this.addFlag(pos);
+                break;
+        }
+    }
+
+    private removeFlag(pos: Position): void {
+        this.gui.setCellClosed(pos.x, pos.y);
+        this.field!.setTileStatus(pos.x, pos.y, TileStatus.None);
+    }
+
+    private removeQuantFlag(pos: Position): void {
+        this.quantFlags++;
+        this.quantedTiles = this.quantedTiles.filter(p => !this.isSamePosition(p, pos));
+        this.gui.setQuantFlagCount(this.quantFlags);
+        this.gui.setCellClosed(pos.x, pos.y);
+        this.field!.setTileStatus(pos.x, pos.y, TileStatus.None);
+    }
+
+    private addFlag(pos: Position): void {
+        if (this.currentTool === ToolType.QuantFlag && this.quantFlags > 0) {
+            this.addQuantFlag(pos);
+        } else if (this.currentTool === ToolType.SimpleFlag) {
+            this.addSimpleFlag(pos);
+        }
+    }
+
+    private addQuantFlag(pos: Position): void {
+        this.quantFlags--;
+        this.quantedTiles.push(pos);
+        this.gui.setQuantFlagCount(this.quantFlags);
+        this.gui.setCellQuantFlag(pos.x, pos.y);
+        this.field!.setTileStatus(pos.x, pos.y, TileStatus.QuantFlag);
+    }
+
+    private addSimpleFlag(pos: Position): void {
+        this.gui.setCellSimpleFlag(pos.x, pos.y);
+        this.field!.setTileStatus(pos.x, pos.y, TileStatus.Flag);
+    }
+
+    private updateProbabilities(): void {
+        if (!this.field) return;
+
+        for (const tile of this.openedTiles) {
+            const probability = this.field.getProbabilityAround(tile.x, tile.y);
+            this.gui.setCellOpened(tile.x, tile.y, probability);
+        }
+    }
+
+    private measureQuantFlags(): void {
+        if (!this.field) return;
+
+        this.field.measureQuantFlags();
+        this.resetQuantFlags();
+        this.updateProbabilities();
+    }
+
+    private resetQuantFlags(): void {
+        for (const tile of this.quantedTiles) {
+            this.gui.setCellClosed(tile.x, tile.y);
+        }
+        this.quantedTiles = [];
+    }
+
+    private loadField(): void {
+        this.gui.showPopup('new-game-popup');
+    }
+
+    private getUniquePositions(positions: Position[]): Position[] {
+        return positions.filter((tile, index, self) =>
+            index === self.findIndex(t => t.x === tile.x && t.y === tile.y)
+        );
+    }
+
+    private isSamePosition(a: Position, b: Position): boolean {
+        return a.x === b.x && a.y === b.y;
+    }
+}
+
+export { GUI, initWasm, Game };

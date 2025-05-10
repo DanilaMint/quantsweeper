@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quant Swepeer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="preload" style="display:flex;width:90%;max-width:1200px;height:90%;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.1);background-color:#fff;overflow:hidden;">
+        <div style="margin: auto; display: flexbox;">
+            <h1 style="text-align: center;">Подождите, движок загружается...</h1>
+            <h2 id="wasm-warn" style="display: none;">Похоже, ваш браузер не поддерживает WebAssembly код.</h2>
+        </div>
+        <script>
+            // ПРЕДЗАГРУЗКА (типа bios)
+            document.addEventListener('DOMContentLoaded',_=>{if(typeof WebAssembly==="object"&&typeof WebAssembly.instantiate==="function"){document.getElementById('app').style.display='flex';document.getElementById('preload').style.display='none';}else{document.getElementById('wasm-warn').style.display='static';}});
+        </script>
+    </div>
+    <div class="container" id="app" style="display: none;">
+        <div class="left-panel">
+            <div class="score">Счет: <span id="score">0</span></div>
+            <div class="score">Квантовые флажки: <span id="quant-flag-count"></span></div>
+            <button id="new-game" class="button">Новая игра</button>
+            <div class="tool-selector">
+                <button id="tool-shovel" class="button active">Лопата</button>
+                <button id="tool-simple-flag" class="button">Обычный флажок</button>
+                <button id="tool-quant-flag" class="button">Квантовый флажок</button>
+            </div>
+            <button id="measure" class="button">Измерить (коллапсировать)</button>
+    </div>
+        <div class="right-panel">
+            <div id="game-board"></div>
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay"></div>
+    
+    <div id="new-game-popup" class="popup">
+        <div class="popup-content">
+            <h2>Настройки игры</h2>
+            <label for="width">Ширина (5-30):</label>
+            <input type="number" id="width" min="5" max="30" value="10">
+            
+            <label for="height">Высота (5-30):</label>
+            <input type="number" id="height" min="5" max="30" value="10">
+            
+            <label for="groups">Группы (%):</label>
+            <input type="number" id="groups" min="0" max="100" value="10">
+            
+            <label for="candidates">Кандидаты (%):</label>
+            <input type="number" id="candidates" min="0" max="100" value="20">
+            
+            <button id="start-game" class="button" style="margin-top: 10px;">Начать игру</button>
+        </div>
+    </div>
+
+    <div id="rules-popup" class="popup">
+        <div class="popup-content">
+            <h2>Как играть?</h2>
+            <p>В игре "Квантовый сапер" у тебя есть поле с клетками, на которых находятся мины. Но в отличие от обычного сапера, здесь мины находятся в суперпозиции, то есть одновременно на нескольких клетках. Когда ты открываешь клетку с такой "суперминой", мина становится реальной и перемещается на одну из возможных клеток.</p>
+
+            <p>Чтобы безопасно "зафиксировать" мину, нужно поставить квантовые флажки на те клетки, где, по твоему мнению, может находиться мина, и нажать кнопку "Измерить". После того как все мины будут зафиксированы, нужно расставить обычные флажки на них.</p>
+            <button id="close-popup" class="button">Закрыть</button>
+        </div>
+    </div>
+
+    <script src="dist/app.min.js"></script>
+</body>
+</html>

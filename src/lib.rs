@@ -1,0 +1,134 @@
+mod field;
+mod tile;
+
+use wasm_bindgen::prelude::*;
+
+use field::InternalField;
+use tile::TileStatus;
+
+#[wasm_bindgen]
+pub struct ExternalField {
+    inner: InternalField,
+}
+
+#[wasm_bindgen]
+impl ExternalField {
+    #[wasm_bindgen(constructor)]
+    pub fn new(width: u32, height: u32) -> ExternalField {
+        return ExternalField {
+            inner: InternalField::new(width, height),
+        };
+    }
+
+    #[wasm_bindgen( js_name = "fromBytes" )]
+    pub fn from_bytes(bytes : Vec<u8>) -> Option<ExternalField> {
+        if let Ok(result) = InternalField::from_bytes(&bytes) {
+            return Some(ExternalField {inner: result});
+        }
+        return None;
+    }
+
+    #[wasm_bindgen]
+    pub fn generate(&mut self, first_click_x: i32, first_click_y: i32, groups: f64, candidates: f64) -> Result<(), JsValue> {
+        web_sys::console::log_1(&"Entering generate".into());
+        match self.inner.generate(first_click_x, first_click_y, groups, candidates) {
+            Ok(_) => Ok(()),
+            Err(e) => Err(JsValue::from_str(&e)),
+        }
+    }
+
+    #[wasm_bindgen(js_name = "getTileProb")]
+    pub fn get_prob(&self, x : i32, y : i32) -> JsValue {
+        match self.inner.get_tile(x, y) {
+            Some(tile) => {return JsValue::from(tile.prob.0);},
+            None => {return JsValue::NULL;}
+        }
+    }
+
+    #[wasm_bindgen]
+    pub fn measure(&mut self, x: i32, y: i32) -> Result<(), JsValue> {
+        return self.inner.measure(x, y)
+            .map_err(|e| JsValue::from_str(e));
+    }
+
+    #[wasm_bindgen( js_name = "measureQuantFlags" )]
+    pub fn measure_quant_flags(&mut self) {
+        self.inner.measure_quant_flags();
+    }
+
+    #[wasm_bindgen( js_name = "openTile" )]
+    pub fn open_tile(&mut self, x: i32, y: i32) -> Result<bool, JsValue> {
+        return self.inner.open_tile(x, y)
+            .map_err(|e| JsValue::from_str(e));
+    }
+
+    #[wasm_bindgen( js_name="multiOpenTiles" )]
+    pub fn multiopen_wasm(&mut self, x: i32, y: i32) -> js_sys::Array {
+        let response = self.inner.multiopen(x, y);
+        let result = js_sys::Array::new();
+
+        for item in response {
+            result.push(&JsValue::from(format!("{{\"x\": {}, \"y\": {} }}", item.0, item.1)));
+        }
+        return result;
+    }
+
+    #[wasm_bindgen( js_name = "setTileStatus" )]
+    pub fn set_tile_status(&mut self, x : i32, y : i32, status : TileStatus) {
+        self.inner.set_tile_status(x, y, status);
+    }
+
+    #[wasm_bindgen( js_name = "getTileData" )]
+    pub fn get_tile_data(&self, x: i32, y: i32) -> JsValue {
+        if let Some(tile) = self.inner.get_tile(x, y) {
+            let obj = js_sys::Object::new();
+                js_sys::Reflect::set(&obj, &"status".into(), &tile.status.clone().into()).unwrap();
+                js_sys::Reflect::set(&obj, &"measured".into(), &tile.measured.into()).unwrap();
+                js_sys::Reflect::set(&obj, &"prob".into(), &tile.prob.0.into()).unwrap();
+            
+            return obj.into();
+        }
+        return JsValue::NULL;
+    }
+
+    #[wasm_bindgen( js_name = "toBytes" )]
+    pub fn to_bytes(&self) -> Vec<u8> {
+        return self.inner.to_bytes();
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn width(&self) -> u32 {
+        return self.inner.width;
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn height(&self) -> u32 {
+        return self.inner.height;
+    }
+
+    #[wasm_bindgen(js_name = "getEntangledGroup")]
+    pub fn get_entangled_group_js(&self, group_id: i8) -> JsValue {
+        let arr = js_sys::Array::new();
+        for (x, y) in self.inner.get_group_elements(group_id) {
+            let obj = js_sys::Object::new();
+            js_sys::Reflect::set(&obj, &"x".into(), &x.into()).unwrap();
+            js_sys::Reflect::set(&obj, &"y".into(), &y.into()).unwrap();
+            arr.push(&obj);
+        }
+        return arr.into();
+    }
+
+    #[wasm_bindgen(js_name = "getAllTiles")]
+    pub fn get_all_tiles(&self) -> js_sys::Array {
+        return (0..self.inner.height)
+            .flat_map(|y| (0..self.inner.width).map(move |x| (x, y)))
+            .map(|(x, y)| self.get_tile_data(x as i32, y as i32))
+            .collect();
+    }
+
+    #[wasm_bindgen(js_name = "getProbabilityAround")]
+    pub fn get_around_prob(&self, x: i32, y : i32) -> u8 {
+        return self.inner.around_prob_sum(x, y).0;
+    }
+}
+
