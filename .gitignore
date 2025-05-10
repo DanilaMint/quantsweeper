@@ -1,8 +1,5 @@
 
-/dist/
-
-!dist/app.min.js
-
+dist/app.bundle.js
 
 /pkg/
 
