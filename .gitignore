@@ -11,6 +11,4 @@ Cargo.lock
 
 package-lock.json
 
-tsconfig.json
-
-webpack.config.js
+web/lang.ts

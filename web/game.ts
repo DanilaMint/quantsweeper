@@ -118,10 +118,10 @@ class Game {
     private toggleFlag(pos: Position): void {
         if (!this.field || this.firstClick || this.isGameOver) return;
 
-        const tile = this.field.getTileData(pos.x, pos.y);
-        if (!tile) return;
+        const status = this.field.getTileProb(pos.x, pos.y);
+        if (!status) return;
 
-        switch (tile.status) {
+        switch (status) {
             case TileStatus.Opened:
                 return;
 
