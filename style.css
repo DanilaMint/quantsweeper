@@ -185,29 +185,6 @@ body {
     z-index: 99;
 }
 
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-        height: auto;
-        min-height: 100vh;
-    }
-
-    .left-panel {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #e0e0e0;
-    }
-
-    .right-panel {
-        width: 100%;
-        padding: 10px;
-    }
-
-    #game-board {
-        margin-top: 10px;
-    }
-}
-
 .cell-value {
     position: absolute;
     top: 50%;
@@ -284,4 +261,27 @@ body {
 
 #tool-quant-flag.active {
     background-color: #7b1fa2;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .left-panel {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .right-panel {
+        width: 100%;
+        padding: 10px;
+    }
+
+    #game-board {
+        margin-top: 10px;
+    }
 }

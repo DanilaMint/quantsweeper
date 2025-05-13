@@ -2,9 +2,11 @@ import { ToolType, Position, GameConfig, debugMessage, toolTypeAsString } from "
 import init, { ExternalField, TileStatus } from '../pkg/quantswepeer.js';
 import { GUI } from "./gui";
 
-const initWasm = init;
+export const initWasm = init;
 
-class Game {
+export class Game {
+    private readonly gui : GUI;
+
     private field: ExternalField | null = null;
     private quantFlags: number = 0;
     private openedTiles: Position[] = [];
@@ -14,7 +16,8 @@ class Game {
     private isGameOver: boolean = true;
     private currentTool: ToolType = ToolType.Shovel;
 
-    constructor(private readonly gui: GUI) {
+    constructor() {
+        this.gui = new GUI();
         debugMessage(`Initializing game...`);
         this.initializeEventHandlers();
         this.loadField();
@@ -34,10 +37,26 @@ class Game {
     }
 
     private startNewGame(config: GameConfig): void {
-        debugMessage(`Starting new game... Config = ${config}`);
-        this.initializeGameState(config);
-        this.gui.createGameBoard(config.width, config.height);
+        this.config = this.validateConfig(config);
+        debugMessage(`{width: ${this.config.width}, height: ${this.config.height}, groups: ${this.config.groups}, candidates: ${this.config.candidates}}`);
+        this.initializeGameState(this.config);
+        this.gui.createGameBoard(this.config.width, this.config.height);
         this.gui.setQuantFlagCount(this.quantFlags);
+    }
+
+    private validateConfig(config: GameConfig): GameConfig {
+        const result = {...config};
+        result.width = Math.min(Math.max(Math.round(result.width), 5), 30);
+        result.height = Math.min(Math.max(Math.round(result.height), 5), 30);
+        result.groups = Math.min(Math.max(result.groups, 1), 100);
+
+        const minCandidates = result.groups;
+        const maxCandidates = Math.min(result.groups * 4, 100); // Ограничиваем и groups*4, и 1.0
+        result.candidates = Math.min(
+            Math.max(result.candidates || minCandidates, minCandidates),
+            maxCandidates
+        );
+        return result;
     }
 
     private initializeGameState(config: GameConfig): void {
@@ -211,5 +230,3 @@ class Game {
         return a.x === b.x && a.y === b.y;
     }
 }
-
-export { GUI, initWasm, Game };

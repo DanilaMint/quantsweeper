@@ -4,6 +4,12 @@ import { CellManager } from "./cell-manager";
 import { ToolType, GameConfig, Position, debugMessage } from "./static";
 
 export class GUI {
+    private readonly gameBoard: HTMLElement
+    private readonly scoreElement: HTMLElement
+    private readonly quantFlagCountElement: HTMLElement
+    private readonly popupElement: HTMLElement
+    private readonly overlayElement: HTMLElement
+
     public readonly onToolChanged = new Signal<ToolType>();
     public readonly onCellInteract = new Signal<Position>();
     public readonly onNewGame = new Signal<GameConfig>();
@@ -13,14 +19,14 @@ export class GUI {
     private currentPopupId: string = '';
     private currentTool: ToolType = ToolType.Shovel;
     
-    constructor(
-        private readonly gameBoard: HTMLElement,
-        private readonly scoreElement: HTMLElement,
-        private readonly quantFlagCountElement: HTMLElement,
-        private readonly popupElement: HTMLElement,
-        private readonly overlayElement: HTMLElement
-    ) {
-        this.cellManager = new CellManager(gameBoard);
+    constructor() {
+        this.gameBoard = <HTMLElement>document.getElementById('game-board');
+        this.scoreElement = <HTMLElement>document.getElementById('score');
+        this.quantFlagCountElement = <HTMLElement>document.getElementById('quant-flag-count');
+        this.popupElement = <HTMLElement>document.getElementById('popup');
+        this.overlayElement = <HTMLElement>document.getElementById('overlay');
+
+        this.cellManager = new CellManager(this.gameBoard);
         this.setupEventListeners();
     }
 

@@ -1,10 +1,19 @@
 mod field;
 mod tile;
 
+mod bytes;
+mod collapser;
+mod generator;
+mod misc;
+mod opener;
+
 use wasm_bindgen::prelude::*;
 
 use field::InternalField;
 use tile::TileStatus;
+
+use {bytes::Byter, collapser::Collapser, generator::Generator, misc::MiscMethods, opener::TileOpener};
+
 
 #[wasm_bindgen]
 pub struct ExternalField {
@@ -20,6 +29,50 @@ impl ExternalField {
         };
     }
 
+    // геттеры
+    #[wasm_bindgen(getter)]
+    pub fn width(&self) -> u32 {
+        return self.inner.width;
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn height(&self) -> u32 {
+        return self.inner.height;
+    }
+
+    // геттеры клеток
+    #[wasm_bindgen(js_name = "getTileProb")]
+    pub fn get_prob(&self, x : i32, y : i32) -> Option<u8> {
+        return Some(self.inner.get_tile(x, y)?.prob.0);
+    }
+
+    #[wasm_bindgen(js_name = "getProbabilityAround")]
+    pub fn get_around_prob(&self, x: i32, y : i32) -> u8 {
+        return self.inner.around_prob_sum(x, y).0;
+    }
+
+    #[wasm_bindgen( js_name = "getTileData" )]
+    pub fn get_tile_data(&self, x: i32, y: i32) -> JsValue {
+        if let Some(tile) = self.inner.get_tile(x, y) {
+            let obj = js_sys::Object::new();
+                js_sys::Reflect::set(&obj, &"status".into(), &tile.status.clone().into()).unwrap();
+                js_sys::Reflect::set(&obj, &"measured".into(), &tile.measured.into()).unwrap();
+                js_sys::Reflect::set(&obj, &"prob".into(), &tile.prob.0.into()).unwrap();
+            
+            return obj.into();
+        }
+        return JsValue::NULL;
+    }
+
+    #[wasm_bindgen(js_name = "getAllTiles")]
+    pub fn get_all_tiles(&self) -> js_sys::Array {
+        return (0..self.inner.height)
+            .flat_map(|y| (0..self.inner.width).map(move |x| (x, y)))
+            .map(|(x, y)| self.get_tile_data(x as i32, y as i32))
+            .collect();
+    }
+
+
     #[wasm_bindgen( js_name = "fromBytes" )]
     pub fn from_bytes(bytes : Vec<u8>) -> Option<ExternalField> {
         if let Ok(result) = InternalField::from_bytes(&bytes) {
@@ -33,14 +86,6 @@ impl ExternalField {
         match self.inner.generate(first_click_x, first_click_y, groups, candidates) {
             Ok(_) => Ok(()),
             Err(e) => Err(JsValue::from_str(&e)),
-        }
-    }
-
-    #[wasm_bindgen(js_name = "getTileProb")]
-    pub fn get_prob(&self, x : i32, y : i32) -> JsValue {
-        match self.inner.get_tile(x, y) {
-            Some(tile) => {return JsValue::from(tile.prob.0);},
-            None => {return JsValue::NULL;}
         }
     }
 
@@ -77,32 +122,9 @@ impl ExternalField {
         self.inner.set_tile_status(x, y, status);
     }
 
-    #[wasm_bindgen( js_name = "getTileData" )]
-    pub fn get_tile_data(&self, x: i32, y: i32) -> JsValue {
-        if let Some(tile) = self.inner.get_tile(x, y) {
-            let obj = js_sys::Object::new();
-                js_sys::Reflect::set(&obj, &"status".into(), &tile.status.clone().into()).unwrap();
-                js_sys::Reflect::set(&obj, &"measured".into(), &tile.measured.into()).unwrap();
-                js_sys::Reflect::set(&obj, &"prob".into(), &tile.prob.0.into()).unwrap();
-            
-            return obj.into();
-        }
-        return JsValue::NULL;
-    }
-
     #[wasm_bindgen( js_name = "toBytes" )]
     pub fn to_bytes(&self) -> Vec<u8> {
         return self.inner.to_bytes();
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn width(&self) -> u32 {
-        return self.inner.width;
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn height(&self) -> u32 {
-        return self.inner.height;
     }
 
     #[wasm_bindgen(js_name = "getEntangledGroup")]
@@ -115,19 +137,6 @@ impl ExternalField {
             arr.push(&obj);
         }
         return arr.into();
-    }
-
-    #[wasm_bindgen(js_name = "getAllTiles")]
-    pub fn get_all_tiles(&self) -> js_sys::Array {
-        return (0..self.inner.height)
-            .flat_map(|y| (0..self.inner.width).map(move |x| (x, y)))
-            .map(|(x, y)| self.get_tile_data(x as i32, y as i32))
-            .collect();
-    }
-
-    #[wasm_bindgen(js_name = "getProbabilityAround")]
-    pub fn get_around_prob(&self, x: i32, y : i32) -> u8 {
-        return self.inner.around_prob_sum(x, y).0;
     }
 }
 
