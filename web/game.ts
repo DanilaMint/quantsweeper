@@ -45,17 +45,27 @@ export class Game {
     }
 
     private validateConfig(config: GameConfig): GameConfig {
-        const result = {...config};
-        result.width = Math.min(Math.max(Math.round(result.width), 5), 30);
-        result.height = Math.min(Math.max(Math.round(result.height), 5), 30);
-        result.groups = Math.min(Math.max(result.groups, 1), 100);
+        const defaults: GameConfig = {
+            width: 10,      // стандартное значение ширины
+            height: 10,     // стандартное значение высоты
+            groups: 10,      // стандартное количество групп
+            candidates: 20   // стандартное количество кандидатов
+        };
+
+        const result: GameConfig = { ...defaults, ...config };
+
+        // Проверка и корректировка числовых значений
+        result.width = Math.min(Math.max(Math.round(result.width || defaults.width), 5), 30);
+        result.height = Math.min(Math.max(Math.round(result.height || defaults.height), 5), 30);
+        result.groups = Math.min(Math.max(result.groups || defaults.groups, 1), 100);
 
         const minCandidates = result.groups;
-        const maxCandidates = Math.min(result.groups * 4, 100); // Ограничиваем и groups*4, и 1.0
+        const maxCandidates = Math.min(result.groups * 4, 100);
         result.candidates = Math.min(
             Math.max(result.candidates || minCandidates, minCandidates),
             maxCandidates
         );
+
         return result;
     }
 
