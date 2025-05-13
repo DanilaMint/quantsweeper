@@ -135,10 +135,12 @@ export class Game {
     }
 
     private toggleFlag(pos: Position): void {
+        debugMessage(`Setting flag to (${pos.x}, ${pos.y})`);
         if (!this.field || this.firstClick || this.isGameOver) return;
 
-        const status = this.field.getTileProb(pos.x, pos.y);
-        if (!status) return;
+        const status = this.field.getTileStatus(pos.x, pos.y);
+        debugMessage(status);
+        if (status === undefined) return;
 
         switch (status) {
             case TileStatus.Opened:

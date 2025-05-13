@@ -45,6 +45,7 @@ export class CellManager {
     public updateCellContent(x: number, y: number, content: string): void {
         debugMessage(`updateCellContent(x: ${x}, y: ${y}, content: ${content})`);
         const cellContent = this.getCellContentElement(x, y);
+        debugMessage(`cellContent = ${cellContent}`);
         if (cellContent) {
             cellContent.innerHTML = content;
         }

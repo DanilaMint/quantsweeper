@@ -1,6 +1,6 @@
 {
     "name": "quantswepeer",
-    "version": "0.1.2",
+    "version": "0.2.0",
     "main": "web/main.js",
     "scripts": {
         "compile": "wasm-pack build --target web",

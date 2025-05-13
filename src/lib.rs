@@ -72,6 +72,10 @@ impl ExternalField {
             .collect();
     }
 
+    #[wasm_bindgen(js_name = "getTileStatus")]
+    pub fn get_tile_status(&self, x : i32, y : i32) -> Option<TileStatus> {
+        return Some(self.inner.get_tile(x, y)?.status.clone());
+    }
 
     #[wasm_bindgen( js_name = "fromBytes" )]
     pub fn from_bytes(bytes : Vec<u8>) -> Option<ExternalField> {
