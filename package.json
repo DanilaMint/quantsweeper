@@ -1,12 +1,12 @@
 {
     "name": "quantswepeer",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "main": "web/main.js",
     "scripts": {
         "compile": "wasm-pack build --target web",
         "packd": "npx webpack --mode development",
         "packr": "npx webpack --mode production",
-        "min": "npx terser dist/app.bundle.js -o dist/app.min.js --mangle reserved=['__wbindgen_free','__wbindgen_malloc','__wbindgen_realloc','__DEBUG_MODE__','enableDebugMode','disableDebugMode'] --compress passes=3 --format preamble='\"let __DEBUG_MODE__=false;\"'",
+        "min": "npx terser dist/app.bundle.js -o dist/app.min.js --mangle reserved=['__wbindgen_free','__wbindgen_malloc','__wbindgen_realloc','__DEBUG_MODE__','enableDebugMode','disableDebugMode'] --compress passes=3",
         "build:dev": "cls && npm run compile && npm run packd",
         "build:release": "cls && npm run compile && npm run packr && npm run min",
         "start": "http-server"

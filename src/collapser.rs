@@ -1,61 +1,76 @@
 use std::collections::HashSet;
-use rand::seq::SliceRandom;
+use rand::Rng;
 
 use crate::field::InternalField;
 use crate::misc::MiscMethods;
-use crate::tile::{Prob, TileStatus};
+use crate::tile::*;
 
 pub trait Collapser {
-    fn measure_simple_tile(&mut self, x: i32, y: i32);
-    fn measure_group(&mut self, group_id : i8);
-    fn measure(&mut self, x: i32, y: i32) -> Result<(), &str>;
+    fn measure_simple_tile(&mut self, x: i32, y: i32) -> Result<(), String>;
+    fn measure_group(&mut self, group_id : i8) -> Result<(), String>;
+    fn measure(&mut self, x: i32, y: i32) -> Result<(), String>;
     fn get_tiles_with_quant_flags(&self) -> HashSet<i8>;
-    fn measure_quant_flag_groups(&mut self, quantum_groups : &HashSet<i8>);
-    fn measure_quant_flags(&mut self);
+    fn measure_quant_flag_groups(&mut self, quantum_groups : &HashSet<i8>) -> Result<(), Vec<String>>;
+    fn measure_quant_flags(&mut self) -> Result<(), String>;
 }
 
 impl Collapser for InternalField {
-    fn measure_simple_tile(&mut self, x: i32, y: i32) {
-        if let Some(tile) = self.get_mut_tile(x, y) {
+    fn measure_simple_tile(&mut self, x: i32, y: i32) -> Result<(), String> {
+        let tile = self.get_mut_tile(x, y).ok_or(format!("Unfound tile at ({}, {})", x, y))?;
+        
+        if !tile.measured && tile.status != TileStatus::Opened {
             tile.measured = true;
             tile.prob = Prob(0);
         }
-    }
-
-    fn measure_group(&mut self, group_id : i8) {
-        let group_coords = self.get_group_elements(group_id);
-        if let Some(&mine_pos) = group_coords.choose(&mut self.rng) {
-            for (cx, cy) in group_coords {
-                if let Some(tile) = self.get_mut_tile(cx, cy) {
-                    tile.measured = true;
-                    tile.prob = if (cx, cy) == mine_pos { Prob(12) } else { Prob(0) };
-                }
-            }
+        else {
+            return Err(format!("Tile ({}, {}) has been already opened or measured; measured={}, status={:?}", x, y, tile.measured, tile.status));
         }
+        return Ok(());
     }
 
-    fn measure(&mut self, x: i32, y: i32) -> Result<(), &str> {
-        if let Some(tile) = self.get_mut_tile(x, y) {
-            if tile.measured {
-                return Err("Tile has been already measured.");
-            }
+    fn measure_group(&mut self, target_group_id : i8) -> Result<(), String> {
+        let mut matching_indices: Vec<&mut Tile> = self.tiles
+            .iter_mut().filter(|t| t.group_id == target_group_id).collect();
 
-            let group_id = tile.group_id;
+        if matching_indices.is_empty() {
+            return Err(format!("Cant found tiles with that group ({})", target_group_id));
+        }
+        if matching_indices[0].measured {
+            return Err(format!("Tiles that group ({}) have been already collapsed.", target_group_id));
+        }
+        for tile in &mut matching_indices {
+            tile.measured = true;
+            tile.prob = Prob(0);
+        }
+        let mine_index = self.rng.gen_range(0..matching_indices.len());
+        if let Some(mine_tile) = matching_indices.get_mut(mine_index) {
+            mine_tile.prob = Prob(12);
+        }
+        else {
+            return Err(format!("Unfound mine candidate in group ({})", target_group_id));
+        }
+        return Ok(());
+    }
 
-            if group_id == -1 {
-                self.measure_simple_tile(x, y);
-                return Ok(());
-            } else {
-                self.measure_group(group_id);
-                return Ok(());
-            }
+    fn measure(&mut self, x: i32, y: i32) -> Result<(), String> {
+        let tile = self.get_mut_tile(x, y).ok_or(format!("Tile at ({}, {}) isn't found", x, y))?;
+        if tile.measured {
+            return Err(format!("Tile ({}, {}) has been already measured.", x, y));
+        }
+
+        let group_id = tile.group_id;
+
+        if group_id == -1 {
+            self.measure_simple_tile(x, y)?;
+            return Ok(());
         } else {
-            return Err("Tile isn't found");
+            self.measure_group(group_id)?;
+            return Ok(());
         }
     }
 
     fn get_tiles_with_quant_flags(&self) -> HashSet<i8> {
-        let mut quantum_groups = std::collections::HashSet::new();
+        let mut quantum_groups = HashSet::new();
         
         for y in 0..self.height {
             for x in 0..self.width {
@@ -69,7 +84,8 @@ impl Collapser for InternalField {
         return quantum_groups;
     }
 
-    fn measure_quant_flag_groups(&mut self, quantum_groups : &HashSet<i8>) {
+    fn measure_quant_flag_groups(&mut self, quantum_groups : &HashSet<i8>) -> Result<(), Vec<String>> {
+        let mut error_bank : Vec<String> = Vec::new();
         for &group_id in quantum_groups {
             if group_id == -1 {
                 for y in 0..self.height as i32 {
@@ -83,10 +99,8 @@ impl Collapser for InternalField {
                     }
                 }
             } else {
-                // Группы запутанных тайлов
-                self.measure_group(group_id);
+                let _ = self.measure_group(group_id).unwrap_or_else(|e| error_bank.push(e));
                 
-                // Убираем флажки у всей группы
                 let group_coords = self.get_group_elements(group_id);
                 for (x, y) in group_coords {
                     if let Some(tile) = self.get_mut_tile(x, y) {
@@ -95,10 +109,13 @@ impl Collapser for InternalField {
                 }
             }
         }
+        return Ok(());
     }
 
-    fn measure_quant_flags(&mut self) {
+    fn measure_quant_flags(&mut self) -> Result<(), String> {
         let quantum_groups = self.get_tiles_with_quant_flags();
-        self.measure_quant_flag_groups(&quantum_groups);
+        self.measure_quant_flag_groups(&quantum_groups)
+            .map_err(|error_bank| error_bank.join("\n"))?;
+        return Ok(());
     }
 }

@@ -2,9 +2,18 @@
 
 [Open](https://danilakouzmenko.github.io/quantswepeer/)
 
-Игра "квантовый сапер", написанная на Rust с использованием WebAssembly. Отличие от классического сапера заключается в том, что мины находятся в суперпозиции и стоят одновременно на нескольких клетках. При открытии клетки с квантовой миной она коллапсирует в одну из возможных позиций. Чтобы безопасно сколлапсировать мину используется квантовый флажок.
+[Don't know russian? Read it english!](#eng)
 
-## Change Log
+## Правила
+
+QuantSweeper - квантовая версия "Сапёра", где мины находятся в суперпозиции между несколькими клетками. При открытии клетки с квантовой миной происходит коллапс в одну из возможных позиций. Используйте квантовые флажки для безопасного измерения позиций мин.
+
+Отличия от классической игры:
+- Мины находятся в суперпозиции внутри запутанных "групп" клеток
+- Квантовые флажки позволяют безопасно измерить позиции мин
+- Вероятности показывают возможные расположения мин
+
+## Изменения
 
 ### 0.1.0
 - Релиз игры
@@ -19,4 +28,39 @@
 - Добавлена валидация вводимых значений
 
 ### 0.2.1
-- Валидация не ломается от undefined
+- Валидация не ломается от undefined/NaN
+
+### 0.2.2
+- Исправлен баг с появлением мины на уже открытой клетке
+
+
+<h3 id="eng"></h3>
+
+## Game Rules
+
+QuantSweeper is a quantum version of Minesweeper where mines exist in superposition across multiple tiles. When you reveal a tile with a quantum mine, it collapses to one possible position. Use quantum flags to safely collapse mine superpositions.
+
+Key differences from classic Minesweeper:
+- Mines exist in superposition across a "group" of tiles
+- Quantum flags allow safe measurement of mine positions
+- Probability values show potential mine locations
+
+## Change Log
+
+### 0.1.0
+- Game Release
+
+### 0.1.1
+- Fixed of render mine
+- Removed multiopening if that's mine
+- Added DebugMode
+
+### 0.2.0
+- Rust-code refactoring: implementation `InternalField` split into module components
+- Add input validation
+
+### 0.2.1
+- Validation can process undefined/NaN values
+
+### 0.2.2
+- Fixed mine appearing at already opened tile

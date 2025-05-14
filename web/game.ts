@@ -1,4 +1,4 @@
-import { ToolType, Position, GameConfig, debugMessage, toolTypeAsString } from "./static";
+import { ToolType, Position, GameConfig, debugMessage, toolTypeAsString, __DEBUG_MODE__ } from "./static";
 import init, { ExternalField, TileStatus } from '../pkg/quantswepeer.js';
 import { GUI } from "./gui";
 
@@ -80,20 +80,6 @@ export class Game {
         this.isGameOver = false;
     }
 
-    private handleTileInteraction(pos: Position): void {
-        if (!this.field || this.isGameOver) return;
-
-        switch (this.currentTool) {
-            case ToolType.Shovel: 
-                this.openTile(pos); 
-                break;
-            case ToolType.SimpleFlag:
-            case ToolType.QuantFlag: 
-                this.toggleFlag(pos); 
-                break;
-        }
-    }
-
     private openTile(pos: Position): void {
         if (!this.field || !this.config) return;
 
@@ -107,67 +93,15 @@ export class Game {
 
     private generateField(pos: Position): void {
         this.field!.generate(
-            pos.x, 
-            pos.y, 
-            this.config!.groups / 100, 
+            pos.x,
+            pos.y,
+            this.config!.groups / 100,
             this.config!.candidates / 100
         );
     }
 
-    private processTileOpening(pos: Position): void {
-        const mine = this.__openTile(pos);
-        if (!mine) {
-            const result = this.field!.multiOpenTiles(pos.x, pos.y);
-            const parsed = JSON.parse(`[${result}]`) as Position[];
-        
-            this.openedTiles.push(...parsed);
-            this.openedTiles = this.getUniquePositions(this.openedTiles);
-            this.updateProbabilities();
-        }
-    }
-
-    private __openTile(pos: Position): boolean {
-        this.openedTiles.push(pos);
-        this.field.openTile(pos.x, pos.y);
-        
-        if (this.field!.getTileProb(pos.x, pos.y) >= 12) {
-            this.gui.setCellMine(pos.x, pos.y);
-            this.gameOver();
-            return true;
-        }
-        
-        this.updateProbabilities();
-        return false;
-    }
-
     private gameOver(): void {
         this.isGameOver = true;
-    }
-
-    private toggleFlag(pos: Position): void {
-        debugMessage(`Setting flag to (${pos.x}, ${pos.y})`);
-        if (!this.field || this.firstClick || this.isGameOver) return;
-
-        const status = this.field.getTileStatus(pos.x, pos.y);
-        debugMessage(status);
-        if (status === undefined) return;
-
-        switch (status) {
-            case TileStatus.Opened:
-                return;
-
-            case TileStatus.Flag:
-                this.removeFlag(pos);
-                break;
-
-            case TileStatus.QuantFlag:
-                this.removeQuantFlag(pos);
-                break;
-
-            case TileStatus.None:
-                this.addFlag(pos);
-                break;
-        }
     }
 
     private removeFlag(pos: Position): void {
@@ -213,14 +147,6 @@ export class Game {
         }
     }
 
-    private measureQuantFlags(): void {
-        if (!this.field) return;
-
-        this.field.measureQuantFlags();
-        this.resetQuantFlags();
-        this.updateProbabilities();
-    }
-
     private resetQuantFlags(): void {
         for (const tile of this.quantedTiles) {
             this.gui.setCellClosed(tile.x, tile.y);
@@ -240,5 +166,147 @@ export class Game {
 
     private isSamePosition(a: Position, b: Position): boolean {
         return a.x === b.x && a.y === b.y;
+    }
+
+    private printAllField() {
+        if (__DEBUG_MODE__) console.clear();
+        if (!this.field) return;
+        for (let y = 0; y < this.field.height; y++) {
+            for (let x = 0; x < this.field.width; x++) {
+                debugMessage(`(${x}, ${y}): Tile(prob=${this.field.getTileProb(x, y)}/12, group=${this.field.getTileGroup(x, y)}, measured=${this.field.hasTileMeasured(x, y)}, status=${this.field.getTileStatus(x, y)})`);
+            }
+        }
+    }
+
+    private handleTileInteraction(pos: Position): void {
+        if (!this.field || this.isGameOver) return;
+
+        switch (this.currentTool) {
+            case ToolType.Shovel:
+                this.openTile(pos);
+                break;
+            case ToolType.SimpleFlag:
+            case ToolType.QuantFlag:
+                this.toggleFlag(pos);
+                break;
+        }
+        if (!this.isGameOver) {
+            this.printAllField();
+            this.renderField();
+        }
+    }
+
+    private processTileOpening(pos: Position): void {
+        const mine = this.__openTile(pos);
+        if (!mine) {
+            const result = this.field!.multiOpenTiles(pos.x, pos.y);
+            const parsed = JSON.parse(`[${result}]`) as Position[];
+
+            this.openedTiles.push(...parsed);
+            this.openedTiles = this.getUniquePositions(this.openedTiles);
+            this.renderField(); // Заменяем updateProbabilities на renderField
+        }
+    }
+
+    private __openTile(pos: Position): boolean {
+        this.openedTiles.push(pos);
+        
+
+        if (this.field!.openTile(pos.x, pos.y)) {
+            this.gameOver();
+            this.gui.setCellMine(pos.x, pos.y);
+            //this.renderField(); // Обновляем отображение после проигрыша
+            return true;
+        }
+
+        this.renderField(); // Заменяем updateProbabilities на renderField
+        return false;
+    }
+
+    private toggleFlag(pos: Position): void {
+        if (!this.field || this.firstClick || this.isGameOver) return;
+
+        const status = this.field.getTileStatus(pos.x, pos.y);
+        if (status === undefined) return;
+
+        switch (status) {
+            case TileStatus.Opened:
+                return;
+
+            case TileStatus.Flag:
+                this.field!.setTileStatus(pos.x, pos.y, TileStatus.None);
+                break;
+
+            case TileStatus.QuantFlag:
+                this.quantFlags++;
+                this.quantedTiles = this.quantedTiles.filter(p => !this.isSamePosition(p, pos));
+                this.gui.setQuantFlagCount(this.quantFlags);
+                this.field!.setTileStatus(pos.x, pos.y, TileStatus.None);
+                break;
+
+            case TileStatus.None:
+                if (this.currentTool === ToolType.QuantFlag && this.quantFlags > 0) {
+                    this.quantFlags--;
+                    this.quantedTiles.push(pos);
+                    this.gui.setQuantFlagCount(this.quantFlags);
+                    this.field!.setTileStatus(pos.x, pos.y, TileStatus.QuantFlag);
+                } else if (this.currentTool === ToolType.SimpleFlag) {
+                    this.field!.setTileStatus(pos.x, pos.y, TileStatus.Flag);
+                }
+                break;
+        }
+
+        this.renderField(); // Обновляем отображение после изменения флагов
+    }
+
+    private measureQuantFlags(): void {
+        if (!this.field) return;
+
+        this.field.measureQuantFlags();
+        this.quantedTiles = [];
+        this.renderField(); // Обновляем отображение после измерения
+    }
+
+    private renderField(): void {
+        if (!this.field) return;
+
+        // Обновляем счетчик квантовых флагов
+        this.gui.setQuantFlagCount(this.quantFlags);
+
+        // Отрисовываем все клетки
+        for (let y = 0; y < this.field.height; y++) {
+            for (let x = 0; x < this.field.width; x++) {
+                const status = this.field.getTileStatus(x, y);
+
+                if (status === TileStatus.Opened) {
+                    this.gui.setCellOpened(x, y, this.field.getProbabilityAround(x, y));
+                } else if (status === TileStatus.Flag) {
+                    this.gui.setCellSimpleFlag(x, y);
+                } else if (status === TileStatus.QuantFlag) {
+                    this.gui.setCellQuantFlag(x, y);
+                } else {
+                    this.gui.setCellClosed(x, y);
+                }
+            }
+        }
+
+        // В дебаг-режиме выводим дополнительную информацию
+        if (__DEBUG_MODE__) {
+            this.printDebugInfo();
+        }
+    }
+
+    private printDebugInfo(): void {
+        console.clear();
+        if (!this.field) return;
+
+        for (let y = 0; y < this.field.height; y++) {
+            for (let x = 0; x < this.field.width; x++) {
+                debugMessage(`(${x}, ${y}): Tile(prob=${this.field.getTileProb(x, y)}/12, ` +
+                    `group=${this.field.getTileGroup(x, y)}, ` +
+                    `measured=${this.field.hasTileMeasured(x, y)}, ` +
+                    `status=${this.field.getTileStatus(x, y)})`);
+            }
+        }
     }
 }
