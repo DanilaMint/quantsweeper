@@ -37,7 +37,11 @@ module.exports = {
             {
                 test: /\.wasm$/,
                 type: 'asset/inline'
-            }
+            },
+            {
+                test: /\.svg$/,
+                use: ['raw-loader'],
+            },
         ]
     },
     optimization: {

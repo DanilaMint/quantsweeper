@@ -37,6 +37,11 @@ QuantSweeper - квантовая версия "Сапёра", где мины �
 - Исправлен баг пропажи мины после нажатия кнопки "Измерить"
 - Изменен цвет активной лопаты
 
+### 0.2.4
+- Текстуры вынесены в папку `res`
+- Добавлен значок сайта
+- Временно убран счетчик очков
+
 <h3 id="eng"></h3>
 
 ## Game Rules
@@ -71,3 +76,8 @@ Key differences from classic Minesweeper:
 ### 0.2.3
 - Fixed mine disappearing after press button "Измерить"
 - Changed active shovel color
+
+### 0.2.4
+- Textures are moved to the `res` folder
+- Added icon to game
+- Score counter has been temporarily removed
