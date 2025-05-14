@@ -215,11 +215,10 @@ export class Game {
         if (this.field!.openTile(pos.x, pos.y)) {
             this.gameOver();
             this.gui.setCellMine(pos.x, pos.y);
-            //this.renderField(); // Обновляем отображение после проигрыша
             return true;
         }
 
-        this.renderField(); // Заменяем updateProbabilities на renderField
+        this.renderField();
         return false;
     }
 
@@ -260,7 +259,7 @@ export class Game {
     }
 
     private measureQuantFlags(): void {
-        if (!this.field) return;
+        if (!this.field || this.isGameOver) return;
 
         this.field.measureQuantFlags();
         this.quantedTiles = [];
