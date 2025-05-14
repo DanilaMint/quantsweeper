@@ -204,8 +204,9 @@ export class Game {
 
             this.openedTiles.push(...parsed);
             this.openedTiles = this.getUniquePositions(this.openedTiles);
-            this.renderField(); // Заменяем updateProbabilities на renderField
         }
+        this.checkGameState();
+        this.renderField();
     }
 
     private __openTile(pos: Position): boolean {
@@ -254,7 +255,8 @@ export class Game {
                 }
                 break;
         }
-
+        
+        this.checkGameState();
         this.renderField(); // Обновляем отображение после изменения флагов
     }
 
@@ -264,6 +266,7 @@ export class Game {
         this.field.measureQuantFlags();
         this.quantedTiles = [];
         this.renderField(); // Обновляем отображение после измерения
+        this.checkGameState();
     }
 
     private renderField(): void {
@@ -277,14 +280,34 @@ export class Game {
             for (let x = 0; x < this.field.width; x++) {
                 const status = this.field.getTileStatus(x, y);
 
-                if (status === TileStatus.Opened) {
-                    this.gui.setCellOpened(x, y, this.field.getProbabilityAround(x, y));
-                } else if (status === TileStatus.Flag) {
-                    this.gui.setCellSimpleFlag(x, y);
-                } else if (status === TileStatus.QuantFlag) {
-                    this.gui.setCellQuantFlag(x, y);
-                } else {
-                    this.gui.setCellClosed(x, y);
+                switch (status) {
+                    case TileStatus.Opened:
+                        if (this.field.getTileProb(x, y) >= 12) {
+                            this.gui.setCellMine(x, y);
+                        }
+                        else {
+                            this.gui.setCellOpened(x, y, this.field.getProbabilityAround(x, y));
+                        }
+                        break;
+                    
+                    case TileStatus.QuantFlag:
+                        this.gui.setCellQuantFlag(x, y);
+                        break;
+
+                    case TileStatus.None:
+                        this.gui.setCellClosed(x, y);
+                        break;
+
+                    case TileStatus.Flag:
+                        debugMessage(`Rendering flag: game_over=${this.isGameOver}, Prob= ${this.field.getTileProb(x, y)}`)
+                        if (this.isGameOver && this.field.getTileProb(x, y) >= 12) {
+                            debugMessage('RIGHT Flag!');
+                            this.gui.setCellRightFlag(x, y);
+                        }
+                        else {
+                            debugMessage('Simple Flag!');
+                            this.gui.setCellSimpleFlag(x, y);
+                        }
                 }
             }
         }
@@ -296,7 +319,7 @@ export class Game {
     }
 
     private printDebugInfo(): void {
-        console.clear();
+        //console.clear();
         if (!this.field) return;
 
         for (let y = 0; y < this.field.height; y++) {
@@ -306,6 +329,12 @@ export class Game {
                     `measured=${this.field.hasTileMeasured(x, y)}, ` +
                     `status=${this.field.getTileStatus(x, y)})`);
             }
+        }
+    }
+
+    private checkGameState(): void {
+        if (this.field.isWinStatus()) {
+            this.gameOver();
         }
     }
 }

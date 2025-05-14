@@ -66,6 +66,12 @@ impl ExternalField {
         return Some(self.inner.get_tile(x, y)?.status.clone());
     }
 
+
+    #[wasm_bindgen(js_name = "isWinStatus")]
+    pub fn is_win(&self) -> bool {
+        return self.inner.is_win();
+    }
+
     #[wasm_bindgen( js_name = "fromBytes" )]
     pub fn from_bytes(bytes : Vec<u8>) -> Option<ExternalField> {
         if let Ok(result) = InternalField::from_bytes(&bytes) {

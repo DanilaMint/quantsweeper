@@ -42,6 +42,10 @@ QuantSweeper - квантовая версия "Сапёра", где мины �
 - Добавлен значок сайта
 - Временно убран счетчик очков
 
+### 0.2.5
+- Добавлена текстура правильно-поставленного флажка
+- Добавлен рендеринг окончания игры
+
 <h3 id="eng"></h3>
 
 ## Game Rules
@@ -81,3 +85,7 @@ Key differences from classic Minesweeper:
 - Textures are moved to the `res` folder
 - Added icon to game
 - Score counter has been temporarily removed
+
+### 0.2.5
+- Added right-setted flag texture
+- Added game over rendering

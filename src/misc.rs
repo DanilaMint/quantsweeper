@@ -9,6 +9,7 @@ pub trait MiscMethods {
     fn get_group_elements(&self, group_id : i8) -> Vec<(i32, i32)>;
     fn around_prob_sum(&self, x : i32, y : i32) -> Prob;
     fn set_tile_status(&mut self, x: i32, y: i32, status: TileStatus);
+    fn is_win(&self) -> bool;
 }
 
 impl MiscMethods for InternalField {
@@ -65,5 +66,15 @@ impl MiscMethods for InternalField {
         if let Some(tile) = self.get_mut_tile(x, y) {
             tile.status = status;
         }
+    }
+
+    fn is_win(&self) -> bool {
+        self.tiles.iter().all(|tile| {
+            match tile.prob {
+                Prob(0) => tile.status == TileStatus::Opened,
+                Prob(12) => tile.status == TileStatus::Flag,
+                _ => false,
+            }
+        })
     }
 }

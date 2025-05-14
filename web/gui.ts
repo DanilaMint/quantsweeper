@@ -65,6 +65,10 @@ export class GUI {
     }
 
     // Cell state methods
+    public setCellRightFlag(x: number, y: number): void {
+        this.cellManager.updateCellContent(x, y, Textures.RIGHT_FLAG);
+    }
+
     public setCellClosed(x: number, y: number): void {
         this.cellManager.updateCellContent(x, y, Textures.CLOSED_CELL);
     }

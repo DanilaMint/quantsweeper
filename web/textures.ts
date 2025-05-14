@@ -18,4 +18,8 @@ export class Textures {
     static get MINE_CELL(): string {
         return require('!!raw-loader!../res/tiles/mine.svg').default;
     }
+
+    static get RIGHT_FLAG(): string {
+        return require('!!raw-loader!../res/tiles/rightpos.svg').default;
+    }
 }
