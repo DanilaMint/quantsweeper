@@ -51,6 +51,10 @@ QuantSweeper - квантовая версия "Сапёра", где мины �
 - Переименованы методы из `measure` в `collapse`
 - Убран модуль `bytes`
 
+### 0.3.1
+- Добавлен значок сайту
+- Немного сжат предзагрузочный скрипт
+
 <h3 id="eng"></h3>
 
 ## Game Rules
@@ -99,3 +103,7 @@ Key differences from classic Minesweeper:
 - All logic was moved to Rust
 - Renamed methods from `measure` to `collapse`
 - Removed `bytes` module
+
+### 0.3.1
+- Added favicon
+- Compressed preload script

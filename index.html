@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quant Swepeer</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="res/icon.svg" type="image/x-icon">
 </head>
 <body>
     <div id="preload" style="display:flex;width:90%;max-width:1200px;height:90%;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.1);background-color:#fff;overflow:hidden;">
@@ -14,7 +15,7 @@
         </div>
         <script>
             // ПРЕДЗАГРУЗКА (типа bios)
-            document.addEventListener('DOMContentLoaded',_=>{if(typeof WebAssembly==="object"&&typeof WebAssembly.instantiate==="function"){document.getElementById('app').style.display='flex';document.getElementById('preload').style.display='none';}else{document.getElementById('wasm-warn').style.display='static';}});
+            document.addEventListener('DOMContentLoaded',_=>{var w=WebAssembly;if(typeof w==="object"&&typeof w.instantiate==="function"){document.getElementById('app').style.display='flex';document.getElementById('preload').style.display='none';}else{document.getElementById('wasm-warn').style.display='static';}});
         </script>
     </div>
     <div class="container" id="app" style="display: none;">
