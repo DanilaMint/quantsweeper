@@ -1,4 +1,4 @@
-import { TileStatus } from "../pkg/quantswepeer";
+import { TileStatus, ToolType } from "../pkg/quantswepeer";
 
 // Глобальный интерфейс для доступа из консоли
 declare global {
@@ -7,12 +7,6 @@ declare global {
         enableDebugMode: () => void;
         disableDebugMode: () => void;
     }
-}
-
-export enum ToolType {
-    Shovel,
-    SimpleFlag,
-    QuantFlag
 }
 
 export interface TileData {
@@ -68,3 +62,5 @@ export const debugMessage = (msg: any) => {
         console.log("[DEBUG]", msg);
     }
 };
+
+export {ToolType};

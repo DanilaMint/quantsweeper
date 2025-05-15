@@ -46,6 +46,11 @@ QuantSweeper - квантовая версия "Сапёра", где мины �
 - Добавлена текстура правильно-поставленного флажка
 - Добавлен рендеринг окончания игры
 
+### 0.3.0
+- Вся логика была перенесена в Rust
+- Переименованы методы из `measure` в `collapse`
+- Убран модуль `bytes`
+
 <h3 id="eng"></h3>
 
 ## Game Rules
@@ -89,3 +94,8 @@ Key differences from classic Minesweeper:
 ### 0.2.5
 - Added right-setted flag texture
 - Added game over rendering
+
+### 0.3.0
+- All logic was moved to Rust
+- Renamed methods from `measure` to `collapse`
+- Removed `bytes` module

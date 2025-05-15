@@ -1,14 +1,18 @@
+// СЕЙЧАС ЭТОТ КОД НЕ ИСПОЛЬЗУЕТСЯ
+
+/*
 use rand::thread_rng;
 
-use crate::field::InternalField;
+use crate::field::Field;
 use crate::tile::Tile;
 
 pub trait Byter {
     fn to_bytes(&self) -> Vec<u8>;
-    fn from_bytes(bytes : &[u8]) -> Result<InternalField, &'static str>;
+    fn from_bytes(bytes : &[u8]) -> Result<Field, &'static str>;
 }
 
-impl Byter for InternalField {
+
+impl Byter for Field {
     fn to_bytes(&self) -> Vec<u8> {
         let mut result : Vec<u8> = Vec::new();
         result.extend(self.width.to_ne_bytes());
@@ -19,7 +23,7 @@ impl Byter for InternalField {
         return result;
     }
 
-    fn from_bytes(bytes : &[u8]) -> Result<InternalField, &'static str> {
+    fn from_bytes(bytes : &[u8]) -> Result<Field, &'static str> {
         if bytes.len() >= 8 {
             let width = u32::from_ne_bytes(bytes[0..4].try_into().unwrap());
             let height = u32::from_ne_bytes(bytes[4..8].try_into().unwrap());
@@ -38,8 +42,8 @@ impl Byter for InternalField {
                 let tile = Tile::from_bytes(slice);
                 tiles.push(tile?);
             }
-            return Ok(InternalField {width, height, tiles, rng: thread_rng()});
+            return Ok(Field {width, height, tiles, rng: thread_rng()});
         }
         return Err("Data length less than 8 (size isn't defined)");
     }
-}
+}*/

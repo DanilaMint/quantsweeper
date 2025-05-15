@@ -1,4 +1,4 @@
-use crate::field::{InternalField, DIRECTIONS};
+use crate::field::{Field, DIRECTIONS};
 use crate::tile::*;
 
 pub trait MiscMethods {
@@ -7,12 +7,12 @@ pub trait MiscMethods {
     fn get_mut_tile(&mut self, x: i32, y: i32) -> Option<&mut Tile>;
     fn coords_to_index(&self, x: i32, y: i32) -> Option<usize>;
     fn get_group_elements(&self, group_id : i8) -> Vec<(i32, i32)>;
-    fn around_prob_sum(&self, x : i32, y : i32) -> Prob;
+    fn around_prob_sum(&self, x : i32, y : i32) -> Result<Prob, String>;
     fn set_tile_status(&mut self, x: i32, y: i32, status: TileStatus);
     fn is_win(&self) -> bool;
 }
 
-impl MiscMethods for InternalField {
+impl MiscMethods for Field {
     fn is_inside_bounds(&self, x : i32, y : i32) -> bool {
         return 0 <= x && 0 <= y && x < self.width as i32 && y < self.height as i32;
     }
@@ -50,7 +50,8 @@ impl MiscMethods for InternalField {
         return group;
     }
 
-    fn around_prob_sum(&self, x : i32, y : i32) -> Prob {
+    fn around_prob_sum(&self, x : i32, y : i32) -> Result<Prob, String> {
+        if !self.is_inside_bounds(x, y) {return Err(format!("Tile ({}, {}) outside the bounds", x, y));}
         let mut result = Prob(0);
 
         for (dx, dy) in DIRECTIONS {
@@ -59,7 +60,7 @@ impl MiscMethods for InternalField {
             }
         }
 
-        return result;
+        return Ok(result);
     }
 
     fn set_tile_status(&mut self, x: i32, y: i32, status: TileStatus) {

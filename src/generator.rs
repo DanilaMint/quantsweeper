@@ -1,6 +1,6 @@
 use rand::seq::SliceRandom;
 
-use crate::field::InternalField;
+use crate::field::Field;
 use crate::misc::MiscMethods;
 use crate::tile::Prob;
 
@@ -12,7 +12,7 @@ pub trait Generator {
     fn set_probabilites(&mut self, groups : &Vec<Vec<usize>>) -> Result<(), String>;
 }
 
-impl Generator for InternalField {
+impl Generator for Field {
     fn generate(&mut self, first_click_x: i32, first_click_y: i32, group_percent: f64, supertile_percent: f64) -> Result<(), String> {
         let total_tiles = (self.width * self.height) as usize;
         let total_groups = ((total_tiles - 1) as f64 * group_percent).round().max(1.0) as usize;
@@ -21,7 +21,7 @@ impl Generator for InternalField {
         let mut available_tiles = self.get_available_tiles(total_tiles, first_click_x, first_click_y);
         available_tiles.shuffle(&mut self.rng);
 
-        let mut groups = InternalField::make_groups(&mut available_tiles, total_groups)?;
+        let mut groups = Field::make_groups(&mut available_tiles, total_groups)?;
         self.distribute_tiles(&available_tiles, &mut groups, total_candidates - total_groups);
         self.set_probabilites(&groups)?;
 

@@ -1,9 +1,8 @@
-import { Game, initWasm } from "./game";
-
+import { WasmHook, wasmInit } from './bridge';
 
 async function run() {
-    await initWasm();
-    const game = new Game();
+    await wasmInit();
+    new WasmHook();
 }
 
 document.addEventListener('DOMContentLoaded', run);

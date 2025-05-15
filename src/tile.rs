@@ -48,7 +48,7 @@ impl TileStatus {
 pub struct Tile {
     pub status: TileStatus,
     pub prob: Prob,
-    pub measured: bool,
+    pub collapsed: bool,
     pub group_id: i8
 }
 
@@ -56,7 +56,7 @@ impl Tile {
     pub fn new() -> Self {
         return Self {
             prob: Prob(0),
-            measured: false,
+            collapsed: false,
             group_id: -1,
             status: TileStatus::None
         };
@@ -64,7 +64,7 @@ impl Tile {
 
     pub fn to_bytes(&self) -> [u8; 3] {
         let mut result : [u8; 3] = [0; 3];
-        result[0] = self.status.to_u8() + 4 * self.measured as u8;
+        result[0] = self.status.to_u8() + 4 * self.collapsed as u8;
         result[1] = self.group_id as u8;
         result[2] = self.prob.0;
         return result;
@@ -73,11 +73,11 @@ impl Tile {
     pub fn from_bytes(bytes : &[u8]) -> Result<Tile, &'static str> {
         if bytes.len() == 3 {
             if let Ok(status) = TileStatus::from_u8(bytes[0] % 4) {
-                let measured = bytes[0] / 4 > 0;
+                let collapsed = bytes[0] / 4 > 0;
                 let group_id = bytes[1] as i8;
                 let prob = Prob(bytes[2]);
                 return Ok(Tile {
-                    measured,
+                    collapsed,
                     group_id,
                     prob,
                     status
@@ -98,14 +98,14 @@ mod tests {
         let tile_input = Tile {
             prob: Prob(45),
             group_id: -1,
-            measured: true,
+            collapsed: true,
             status: TileStatus::None
         };
         let bytes = tile_input.to_bytes();
         let tile_output = Tile::from_bytes(&bytes).unwrap();
         
         assert_eq!(tile_input.group_id, tile_output.group_id);
-        assert_eq!(tile_input.measured, tile_output.measured);
+        assert_eq!(tile_input.collapsed, tile_output.collapsed);
         assert_eq!(tile_input.status, tile_output.status);
         assert_eq!(tile_input.prob, tile_output.prob);
         assert_eq!(tile_input, tile_output);
