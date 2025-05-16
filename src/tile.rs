@@ -22,7 +22,7 @@ pub enum TileStatus {
     Flag,       // 2
     QuantFlag   // 3
 }
-
+/* 
 impl TileStatus {
     fn to_u8(&self) -> u8 {
         match self {
@@ -43,6 +43,7 @@ impl TileStatus {
         }
     } 
 }
+*/
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Tile {
@@ -61,7 +62,7 @@ impl Tile {
             status: TileStatus::None
         };
     }
-
+    /* 
     pub fn to_bytes(&self) -> [u8; 3] {
         let mut result : [u8; 3] = [0; 3];
         result[0] = self.status.to_u8() + 4 * self.collapsed as u8;
@@ -87,37 +88,5 @@ impl Tile {
         }
         return Err("Data length isn't equal 3");
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_parsing() {
-        let tile_input = Tile {
-            prob: Prob(45),
-            group_id: -1,
-            collapsed: true,
-            status: TileStatus::None
-        };
-        let bytes = tile_input.to_bytes();
-        let tile_output = Tile::from_bytes(&bytes).unwrap();
-        
-        assert_eq!(tile_input.group_id, tile_output.group_id);
-        assert_eq!(tile_input.collapsed, tile_output.collapsed);
-        assert_eq!(tile_input.status, tile_output.status);
-        assert_eq!(tile_input.prob, tile_output.prob);
-        assert_eq!(tile_input, tile_output);
-    }
-
-    #[test]
-    fn test_unpacking() {
-        let bytes : [u8; 3] = [0, 0, 0];
-        let tile = Tile::from_bytes(&bytes);
-        match tile {
-            Ok(t) => println!("{:?}", t),
-            Err(e) => println!("{}", e),
-        }
-    }
+    */
 }

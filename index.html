@@ -13,14 +13,12 @@
             <h1 style="text-align: center;">Подождите, движок загружается...</h1>
             <h2 id="wasm-warn" style="display: none;">Похоже, ваш браузер не поддерживает WebAssembly код.</h2>
         </div>
-        <script>
-            // ПРЕДЗАГРУЗКА (типа bios)
-            document.addEventListener('DOMContentLoaded',_=>{var w=WebAssembly;if(typeof w==="object"&&typeof w.instantiate==="function"){document.getElementById('app').style.display='flex';document.getElementById('preload').style.display='none';}else{document.getElementById('wasm-warn').style.display='static';}});
-        </script>
+        <script src="web/preload.js"></script>
     </div>
+
     <div class="container" id="app" style="display: none;">
         <div class="left-panel">
-            <div class="score">Счет: <span id="score">0</span></div>
+            <div class="score">Счет: <span id="score">0</span> </div>
             <div class="score">Квантовые флажки: <span id="quant-flag-count"></span></div>
             <button id="new-game" class="button">Новая игра</button>
             <div class="tool-selector">
@@ -65,7 +63,8 @@
             <button id="close-popup" class="button">Закрыть</button>
         </div>
     </div>
-
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="dist/app.min.js"></script>
 </body>
 </html>

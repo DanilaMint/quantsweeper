@@ -2,114 +2,87 @@ import { debugMessage } from "./static";
 import { Textures } from "./textures";
 
 export class CellManager {
-    constructor(private readonly gameBoard: HTMLElement) {}
+    constructor(private readonly gameBoard: JQuery<HTMLElement>) {
+        debugMessage(`CellManager: Constructor called", ${this.gameBoard}`);
+    }
 
     public createBoard(width: number, height: number, onClick: (x: number, y: number) => void): void {
+        debugMessage(`createBoard: Start ${ width}, ${height }`);
         this.clearBoard();
         this.setBoardDimensions(width, height);
         this.populateBoard(width, height, onClick);
+        debugMessage("createBoard: Finished");
     }
 
     private clearBoard(): void {
-        this.gameBoard.innerHTML = '';
+        debugMessage("clearBoard: Clearing the board");
+        this.gameBoard.html('');
     }
 
     private setBoardDimensions(width: number, height: number): void {
-        this.gameBoard.style.gridTemplateColumns = `repeat(${width}, 30px)`;
-        this.gameBoard.style.gridTemplateRows = `repeat(${height}, 30px)`;
+        debugMessage(`setBoardDimensions: Setting dimensions ${ width}, ${height }`);
+        this.gameBoard.css('grid-template-columns', `repeat(${width}, 30px)`);
+        this.gameBoard.css('grid-template-rows', `repeat(${height}, 30px)`);
     }
 
     private populateBoard(width: number, height: number, onClick: (x: number, y: number) => void): void {
+        debugMessage(`populateBoard: Populating cells ${ width}, ${height }`);
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
+                debugMessage(`populateBoard: Creating cell (${x}, ${y})`);
                 this.createCell(x, y, onClick);
             }
         }
     }
 
     private createCell(x: number, y: number, onClick: (x: number, y: number) => void): void {
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        cell.dataset.x = x.toString();
-        cell.dataset.y = y.toString();
-
-        const cellContent = document.createElement('div');
-        cellContent.className = 'cell-content';
-        cellContent.innerHTML = Textures.CLOSED_CELL;
-
-        cell.appendChild(cellContent);
-        cell.addEventListener('click', () => onClick(x, y));
-        this.gameBoard.appendChild(cell);
+        debugMessage(`createCell: Creating cell ${x}, ${y}`);
+        const cell = $(`<div class="cell" data-x="${x}" data-y="${y}">${Textures.CLOSED_CELL}</div>`);
+        cell.on('click', () => {
+            debugMessage(`createCell: Clicked on cell (${x}, ${y})`);
+            onClick(x, y);
+        });
+        this.gameBoard.append(cell); // Исправил .add() на .append(), т.к. .add() не добавляет в DOM
+        debugMessage(`createCell: Cell added to the board ${cell}`);
     }
 
     public updateCellContent(x: number, y: number, content: string): void {
-        debugMessage(`updateCellContent(x: ${x}, y: ${y}, content: ${content})`);
-        const cellContent = this.getCellContentElement(x, y);
-        debugMessage(`cellContent = ${cellContent}`);
-        if (cellContent) {
-            cellContent.innerHTML = content;
+        debugMessage(`updateCellContent: Updating cell", ${x}, ${y}, ${content}`);
+        const cell = this.getCellElement(x, y);
+        if (!cell.length) {
+            debugMessage(`updateCellContent: Cell not found!", ${x}, ${y}`);
+            return;
         }
+        cell.html(content);
     }
 
     public setCellFraction(x: number, y: number, numerator: number, denominator: number = 12): void {
+        debugMessage(`setCellFraction: Setting fraction, ${x}, ${y}, ${numerator}, ${denominator}`);
         const cell = this.getCellElement(x, y);
-        if (!cell) return;
+        if (!cell.length) {
+            debugMessage(`setCellFraction: Cell not found! ${x}, ${y}`);
+            return;
+        }
 
-        cell.classList.add('opened');
-        const cellContent = this.getCellContentElement(x, y);
-        
-        if (cellContent) {
-            cellContent.innerHTML = Textures.OPENED_CELL;
-            
-            if (numerator > 0) {
-                this.createFractionElement(cellContent, numerator, denominator);
-            }
+        cell.addClass('opened');
+        cell.html(Textures.OPENED_CELL);
+
+        if (numerator > 0) {
+            const fractionElement = this.createFractionElement(numerator, denominator);
+            cell.append(fractionElement); // Исправил .add() на .append()
+            debugMessage(`setCellFraction: Fraction added ${ fractionElement }`);
         }
     }
 
-    private createFractionElement(parent: HTMLElement, numerator: number, denominator: number): void {
-        const fractionElement = document.createElement('div');
-        fractionElement.className = 'cell-fraction';
-        fractionElement.textContent = `${numerator}/${denominator}`;
-        parent.appendChild(fractionElement);
+    private createFractionElement(numerator: number, denominator: number): JQuery<HTMLElement> {
+        debugMessage(`createFractionElement: Creating fraction ${ numerator}/${denominator}`);
+        return $(`<div class='cell-fraction'>${numerator}/${denominator}</div>`);
     }
 
-    public updateCellFraction(x: number, y: number, numerator: number, denominator: number = 12): void {
-        const fractionElement = this.getFractionElement(x, y);
-        
-        if (fractionElement) {
-            fractionElement.textContent = `${numerator}/${denominator}`;
-        } else {
-            this.setCellFraction(x, y, numerator, denominator);
-        }
-    }
-
-    private getCellElement(x: number, y: number): HTMLElement | null {
-        return this.gameBoard.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
-    }
-
-    private getCellContentElement(x: number, y: number): HTMLElement | null {
-        return this.getCellElement(x, y)?.querySelector('.cell-content') ?? null;
-    }
-
-    private getFractionElement(x: number, y: number): HTMLElement | null {
-        return this.getCellElement(x, y)?.querySelector('.cell-fraction') ?? null;
-    }
-}
-
-// signal.ts
-export class Signal<T = void> {
-    private handlers: Array<(data: T) => void> = [];
-
-    public connect(handler: (data: T) => void): void {
-        this.handlers.push(handler);
-    }
-
-    public emit(data: T): void {
-        this.handlers.forEach(handler => handler(data));
-    }
-
-    public disconnectAll(): void {
-        this.handlers = [];
+    private getCellElement(x: number, y: number): JQuery<HTMLElement> {
+        const selector = `.cell[data-x="${x}"][data-y="${y}"]`;
+        const cell = this.gameBoard.find(selector);
+        debugMessage(`getCellElement: Finding cell (${x}, ${y}, ${selector}, ${cell} }`);
+        return cell;
     }
 }

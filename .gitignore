@@ -1,6 +1,8 @@
 
 dist/app.bundle.js
 
+dist/app.bundle.jquery.js
+
 /pkg/
 
 node_modules/

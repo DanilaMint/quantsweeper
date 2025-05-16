@@ -1,4 +1,4 @@
-import { GameConfig } from './static.js';
+import { debugMessage, GameConfig } from './static';
 import init, { GameEngine, TileStatus, ToolType } from '../pkg/quantswepeer.js';
 import { GUI } from "./gui";
 
@@ -31,7 +31,7 @@ export class WasmHook {
         const minCandidates = result.groups;
         const maxCandidates = Math.min(result.groups * 4, 100);
         result.candidates = Math.min(
-            Math.max(result.candidates || minCandidates, minCandidates),
+            Math.max(result.candidates || defaults.candidates, minCandidates),
             maxCandidates
         );
 
@@ -40,7 +40,9 @@ export class WasmHook {
 
     private handleMethods() {
         this.gui.onNewGame.connect(config => {
+            debugMessage(config);
             config = this.validateConfig(config);
+            debugMessage(config);
             this.engine.startNewGame(
                 config.width, 
                 config.height, 

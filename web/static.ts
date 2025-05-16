@@ -9,12 +9,6 @@ declare global {
     }
 }
 
-export interface TileData {
-    status: TileStatus;
-    probability: number;
-    measured: boolean;
-}
-
 export interface GameConfig {
     width: number;
     height: number;

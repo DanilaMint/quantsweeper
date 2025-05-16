@@ -4,11 +4,10 @@ import { CellManager } from "./cell-manager";
 import { ToolType, GameConfig, Position, debugMessage } from "./static";
 
 export class GUI {
-    private readonly gameBoard: HTMLElement
-    private readonly scoreElement: HTMLElement
-    private readonly quantFlagCountElement: HTMLElement
-    private readonly popupElement: HTMLElement
-    private readonly overlayElement: HTMLElement
+    private readonly gameBoard: JQuery<HTMLElement>;
+    private readonly scoreElement: JQuery<HTMLElement>;
+    private readonly quantFlagCountElement: JQuery<HTMLElement>;
+    private readonly overlayElement: JQuery<HTMLElement>;
 
     public readonly onToolChanged = new Signal<ToolType>();
     public readonly onCellInteract = new Signal<Position>();
@@ -20,11 +19,10 @@ export class GUI {
     private currentTool: ToolType = ToolType.Shovel;
     
     constructor() {
-        this.gameBoard = <HTMLElement>document.getElementById('game-board');
-        this.scoreElement = <HTMLElement>document.getElementById('score');
-        this.quantFlagCountElement = <HTMLElement>document.getElementById('quant-flag-count');
-        this.popupElement = <HTMLElement>document.getElementById('popup');
-        this.overlayElement = <HTMLElement>document.getElementById('overlay');
+        this.gameBoard = $('#game-board');
+        this.scoreElement = $('#score')
+        this.quantFlagCountElement = $('#quant-flag-count');
+        this.overlayElement = $('#overlay');
 
         this.cellManager = new CellManager(this.gameBoard);
         this.setupEventListeners();
@@ -43,25 +41,25 @@ export class GUI {
     }
 
     public setScore(score: number): void {
-        this.scoreElement.textContent = score.toString();
+        this.scoreElement.text(score);
     }
 
     public setQuantFlagCount(count: number): void {
-        this.quantFlagCountElement.textContent = count.toString();
+        this.quantFlagCountElement.text(count);
     }
 
     public showPopup(id: string): void {
-        const popup = document.getElementById(id) as HTMLElement;
-        popup.style.display = 'block';
-        this.overlayElement.style.display = 'block';
-        this.currentPopupId = id;
+        const popup = $('#' + id);
+        popup.css('display', 'block');
+        this.overlayElement.css('display', 'block');
+        this.currentPopupId = '#' + id;
     }
 
     public hidePopup(): void {
-        const popup = document.getElementById(this.currentPopupId) as HTMLElement;
-        popup.style.display = 'none';
-        this.overlayElement.style.display = 'none';
-        this.currentPopupId = '';
+        const popup = $(this.currentPopupId);
+        popup.css('display', 'none');
+        this.overlayElement.css('display', 'none');
+        this.currentPopupId = '#sus';
     }
 
     // Cell state methods
@@ -82,16 +80,11 @@ export class GUI {
     }
 
     public setCellMine(x: number, y: number): void {
-        debugMessage(`Cell to mine: x=${x}; y=${y}`);
         this.cellManager.updateCellContent(x, y, Textures.MINE_CELL);
     }
 
     public setCellOpened(x: number, y: number, numerator: number, denominator: number = 12): void {
         this.cellManager.setCellFraction(x, y, numerator, denominator);
-    }
-
-    public updateCellFraction(x: number, y: number, numerator: number, denominator: number = 12): void {
-        this.cellManager.updateCellFraction(x, y, numerator, denominator);
     }
 
     private setupEventListeners(): void {
@@ -100,25 +93,15 @@ export class GUI {
     }
 
     private setupButtonListeners(): void {
-        document.getElementById('new-game')?.addEventListener('click', 
-            () => this.showPopup('new-game-popup'));
-        
-        document.getElementById('measure')?.addEventListener('click', 
-            () => this.onMeasure.emit());
-        
-        document.getElementById('start-game')?.addEventListener('click', 
-            () => this.startNewGame());
+        $('#new-game').on('click', _ => this.showPopup('new-game-popup'));
+        $('#measure').on('click', _ => this.onMeasure.emit());
+        $('#start-game').on('click', _ => this.startNewGame());
     }
 
     private setupToolListeners(): void {
-        document.getElementById('tool-shovel')?.addEventListener('click', 
-            () => this.setTool(ToolType.Shovel));
-        
-        document.getElementById('tool-simple-flag')?.addEventListener('click', 
-            () => this.setTool(ToolType.SimpleFlag));
-        
-        document.getElementById('tool-quant-flag')?.addEventListener('click', 
-            () => this.setTool(ToolType.QuantFlag));
+        $('#tool-shovel').on('click', _ => this.setTool(ToolType.Shovel));
+        $('#tool-simple-flag').on('click', _ => this.setTool(ToolType.SimpleFlag));
+        $('#tool-quant-flag').on('click', _ => this.setTool(ToolType.QuantFlag));
     }
 
     private startNewGame(): void {
@@ -128,33 +111,32 @@ export class GUI {
     }
 
     private updateToolButtons(): void {
-        document.querySelectorAll('.tool-selector .button').forEach(btn => {
+        $('.tool-selector .button').each((_, btn) => {
             btn.classList.remove('active');
         });
-
         const activeButtonId = this.getActiveToolButtonId();
-        document.getElementById(activeButtonId)?.classList.add('active');
+        $(activeButtonId).addClass('active');
     }
 
     private getActiveToolButtonId(): string {
         return {
-            [ToolType.Shovel]: 'tool-shovel',
-            [ToolType.SimpleFlag]: 'tool-simple-flag',
-            [ToolType.QuantFlag]: 'tool-quant-flag'
+            [ToolType.Shovel]: '#tool-shovel',
+            [ToolType.SimpleFlag]: '#tool-simple-flag',
+            [ToolType.QuantFlag]: '#tool-quant-flag'
         }[this.currentTool];
     }
 
     private getGameConfig(): GameConfig {
-        const getValue = (id: string): number => {
-            const element = document.getElementById(id) as HTMLInputElement;
-            return parseFloat(element.value);
+        const getValue = (id: string) => {
+            const str = $(id).val()?.toString();
+            return parseFloat(str || "");
         };
 
         return {
-            width: getValue('width'),
-            height: getValue('height'),
-            groups: getValue('groups'),
-            candidates: getValue('candidates')
+            width: getValue('#width'),
+            height: getValue('#height'),
+            groups: getValue('#groups'),
+            candidates: getValue('#candidates')
         };
     }
 }
