@@ -96,6 +96,8 @@ export class GUI {
         $('#new-game').on('click', _ => this.showPopup('new-game-popup'));
         $('#measure').on('click', _ => this.onMeasure.emit());
         $('#start-game').on('click', _ => this.startNewGame());
+        $('#show-tip').on('click', _ => this.showPopup('tip-popup'));
+        $('#hide-tip').on('click', _ => this.hidePopup());
     }
 
     private setupToolListeners(): void {

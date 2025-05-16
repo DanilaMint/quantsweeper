@@ -224,7 +224,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: bold;
     color: #333;
     user-select: none;
@@ -261,6 +261,11 @@ body {
 
 #tool-quant-flag.active {
     background-color: #7b1fa2;
+}
+
+.bottom-element {
+    margin-top: auto;
+    margin-bottom: 0;
 }
 
 @media (max-width: 768px) {
