@@ -1,7 +1,7 @@
 import { Textures } from "./textures";
 import { Signal } from "./signal";
 import { CellManager } from "./cell-manager";
-import { ToolType, GameConfig, Position, debugMessage } from "./static";
+import { ToolType, GameConfig, Position } from "./static";
 
 export class GUI {
     private readonly gameBoard: JQuery<HTMLElement>;
@@ -16,7 +16,6 @@ export class GUI {
 
     private cellManager: CellManager;
     private currentPopupId: string = '';
-    private currentTool: ToolType = ToolType.Shovel;
     
     constructor() {
         this.gameBoard = $('#game-board');
@@ -28,10 +27,30 @@ export class GUI {
         this.setupEventListeners();
     }
 
+    // инициализации
+    private setupEventListeners(): void {
+        this.setupButtonListeners();
+        this.setupToolListeners();
+    }
+
+    private setupButtonListeners(): void {
+        $('#new-game').on('click', _ => this.showPopup('new-game-popup'));
+        $('#measure').on('click', _ => this.onMeasure.emit());
+        $('#start-game').on('click', _ => this.startNewGame());
+        $('#show-tip').on('click', _ => this.showPopup('tip-popup'));
+        $('#hide-tip').on('click', _ => this.hidePopup());
+    }
+
+    private setupToolListeners(): void {
+        $('#tool-shovel').on('click', _ => this.setTool(ToolType.Shovel));
+        $('#tool-simple-flag').on('click', _ => this.setTool(ToolType.SimpleFlag));
+        $('#tool-quant-flag').on('click', _ => this.setTool(ToolType.QuantFlag));
+    }
+
+    // проставление переменных
     public setTool(tool: ToolType): void {
-        this.currentTool = tool;
         this.onToolChanged.emit(tool);
-        this.updateToolButtons();
+        this.updateToolButtons(tool);
     }
 
     public createGameBoard(width: number, height: number): void {
@@ -47,7 +66,8 @@ export class GUI {
     public setQuantFlagCount(count: number): void {
         this.quantFlagCountElement.text(count);
     }
-
+    
+    // попапы
     public showPopup(id: string): void {
         const popup = $('#' + id);
         popup.css('display', 'block');
@@ -62,7 +82,7 @@ export class GUI {
         this.currentPopupId = '#sus';
     }
 
-    // Cell state methods
+    // взаимодействие с клетками
     public setCellRightFlag(x: number, y: number): void {
         this.cellManager.updateCellContent(x, y, Textures.RIGHT_FLAG);
     }
@@ -87,45 +107,25 @@ export class GUI {
         this.cellManager.setCellFraction(x, y, numerator, denominator);
     }
 
-    private setupEventListeners(): void {
-        this.setupButtonListeners();
-        this.setupToolListeners();
-    }
-
-    private setupButtonListeners(): void {
-        $('#new-game').on('click', _ => this.showPopup('new-game-popup'));
-        $('#measure').on('click', _ => this.onMeasure.emit());
-        $('#start-game').on('click', _ => this.startNewGame());
-        $('#show-tip').on('click', _ => this.showPopup('tip-popup'));
-        $('#hide-tip').on('click', _ => this.hidePopup());
-    }
-
-    private setupToolListeners(): void {
-        $('#tool-shovel').on('click', _ => this.setTool(ToolType.Shovel));
-        $('#tool-simple-flag').on('click', _ => this.setTool(ToolType.SimpleFlag));
-        $('#tool-quant-flag').on('click', _ => this.setTool(ToolType.QuantFlag));
-    }
-
     private startNewGame(): void {
         const config = this.getGameConfig();
         this.hidePopup();
         this.onNewGame.emit(config);
     }
 
-    private updateToolButtons(): void {
+    private updateToolButtons(tool : ToolType): void {
         $('.tool-selector .button').each((_, btn) => {
             btn.classList.remove('active');
         });
-        const activeButtonId = this.getActiveToolButtonId();
-        $(activeButtonId).addClass('active');
+        $(this.getActiveToolButtonId(tool)).addClass('active');
     }
 
-    private getActiveToolButtonId(): string {
+    private getActiveToolButtonId(tool : ToolType): string {
         return {
             [ToolType.Shovel]: '#tool-shovel',
             [ToolType.SimpleFlag]: '#tool-simple-flag',
             [ToolType.QuantFlag]: '#tool-quant-flag'
-        }[this.currentTool];
+        }[tool];
     }
 
     private getGameConfig(): GameConfig {

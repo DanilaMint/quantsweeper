@@ -1,6 +1,6 @@
-# QuantSwepeer
+# QuantSweeper
 
-[Open](https://danilakouzmenko.github.io/quantswepeer/)
+[Open](https://danilakouzmenko.github.io/quantsweeper/)
 
 [Don't know russian? Read it english!](#eng)
 
@@ -61,6 +61,9 @@ QuantSweeper - квантовая версия "Сапёра", где мины �
 
 ### 0.4.1
 - Добавлена инструкция к игре
+
+### 0.4.2
+- Убрана возможность поставить флаг на еще не сгенерированное поле
 
 #
 <h3 id="eng"></h3>

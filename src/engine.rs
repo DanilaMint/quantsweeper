@@ -161,6 +161,7 @@ impl GameEngine {
     }
 
     fn toggle_flag(&mut self, x : i32, y : i32) -> Result<(), String> {
+        if self.first_click {return Ok(());}
         let field = self.current_field.as_mut().ok_or(UNDEFINED_FIELD)?;
         match field.get_tile(x, y).ok_or(format!("Unfound tile ({}, {})", x, y))?.status {
             TileStatus::Opened => { return Ok(()); },

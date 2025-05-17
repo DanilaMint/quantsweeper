@@ -2,6 +2,8 @@ import { debugMessage, GameConfig } from './static';
 import init, { GameEngine, TileStatus, ToolType } from '../pkg/quantswepeer.js';
 import { GUI } from "./gui";
 
+const gcd = (a : number, b : number) => {if (!b) {return a;}return gcd(b, a % b)};
+
 export class WasmHook {
     private engine : GameEngine;
     private gui : GUI;
@@ -85,11 +87,20 @@ export class WasmHook {
                         break;
                     case TileStatus.Opened:
                         if (this.engine.isTileMine(x, y)) this.gui.setCellMine(x, y);
-                        else this.gui.setCellOpened(x, y, this.engine.getProbabilityAroundTile(x, y));
+                        else {
+                            const frac = this.reduceFrac(this.engine.getProbabilityAroundTile(x, y));
+                            debugMessage(frac);
+                            this.gui.setCellOpened(x, y, frac.num, frac.den);
+                        };
                         break;
                 }
             }
         }
+    }
+
+    private reduceFrac(num : number, den : number = 12): {num : number, den : number} {
+        const x = gcd(num, den);
+        return {num : num / x, den : den / x};
     }
 }
 

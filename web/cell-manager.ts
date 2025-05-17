@@ -69,12 +69,13 @@ export class CellManager {
 
         if (numerator > 0) {
             const fractionElement = this.createFractionElement(numerator, denominator);
-            cell.append(fractionElement); // Исправил .add() на .append()
+            cell.append(fractionElement);
             debugMessage(`setCellFraction: Fraction added ${ fractionElement }`);
         }
     }
 
     private createFractionElement(numerator: number, denominator: number): JQuery<HTMLElement> {
+        if (denominator == 1) {return $(`<div class='cell-fraction'>${numerator}</div>`);}
         debugMessage(`createFractionElement: Creating fraction ${ numerator}/${denominator}`);
         return $(`<div class='cell-fraction'>${numerator}/${denominator}</div>`);
     }
