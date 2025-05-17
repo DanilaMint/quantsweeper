@@ -76,7 +76,7 @@ impl Generator for Field {
             for id in group {
                 if let Some(tile) = self.tiles.get_mut(*id) {
                     tile.prob = prob.clone();
-                    tile.group_id = group_id as i8;
+                    tile.group_id = group_id as i16;
                 }
             }
         }

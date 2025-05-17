@@ -7,10 +7,10 @@ use crate::tile::*;
 
 pub trait Collapser {
     fn collapse_simple_tile(&mut self, x: i32, y: i32) -> Result<(), String>;
-    fn collapse_group(&mut self, group_id : i8) -> Result<(), String>;
+    fn collapse_group(&mut self, group_id : i16) -> Result<(), String>;
     fn collapse(&mut self, x: i32, y: i32) -> Result<(), String>;
-    fn get_tiles_with_quant_flags(&self) -> HashSet<i8>;
-    fn collapse_quant_flag_groups(&mut self, quantum_groups : &HashSet<i8>) -> Result<(), Vec<String>>;
+    fn get_tiles_with_quant_flags(&self) -> HashSet<i16>;
+    fn collapse_quant_flag_groups(&mut self, quantum_groups : &HashSet<i16>) -> Result<(), Vec<String>>;
     fn collapse_quant_flags(&mut self) -> Result<(), String>;
 }
 
@@ -28,7 +28,7 @@ impl Collapser for Field {
         return Ok(());
     }
 
-    fn collapse_group(&mut self, target_group_id : i8) -> Result<(), String> {
+    fn collapse_group(&mut self, target_group_id : i16) -> Result<(), String> {
         let mut matching_indices: Vec<&mut Tile> = self.tiles
             .iter_mut().filter(|t| t.group_id == target_group_id).collect();
 
@@ -69,7 +69,7 @@ impl Collapser for Field {
         }
     }
 
-    fn get_tiles_with_quant_flags(&self) -> HashSet<i8> {
+    fn get_tiles_with_quant_flags(&self) -> HashSet<i16> {
         let mut quantum_groups = HashSet::new();
         
         for y in 0..self.height {
@@ -84,7 +84,7 @@ impl Collapser for Field {
         return quantum_groups;
     }
 
-    fn collapse_quant_flag_groups(&mut self, quantum_groups : &HashSet<i8>) -> Result<(), Vec<String>> {
+    fn collapse_quant_flag_groups(&mut self, quantum_groups : &HashSet<i16>) -> Result<(), Vec<String>> {
         let mut error_bank : Vec<String> = Vec::new();
         for &group_id in quantum_groups {
             if group_id == -1 {

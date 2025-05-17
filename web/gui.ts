@@ -39,6 +39,29 @@ export class GUI {
         $('#start-game').on('click', _ => this.startNewGame());
         $('#show-tip').on('click', _ => this.showPopup('tip-popup'));
         $('#hide-tip').on('click', _ => this.hidePopup());
+        $(document).on('keydown', e => this.handleKeyboard(e));
+    }
+
+    private handleKeyboard(event : JQuery.KeyDownEvent): void {
+        switch (event.key.toLowerCase()) {
+            case '1':
+                this.setTool(ToolType.Shovel); break;
+            
+            case '2':
+                this.setTool(ToolType.SimpleFlag); break;
+
+            case '3':
+                this.setTool(ToolType.QuantFlag); break;
+
+            case 'r':
+                this.startNewGame(); break;
+
+            case 'e':
+                this.onMeasure.emit(); break;
+            
+            case 'h':
+                this.showPopup('tip-popup'); break;
+        }
     }
 
     private setupToolListeners(): void {

@@ -50,7 +50,7 @@ pub struct Tile {
     pub status: TileStatus,
     pub prob: Prob,
     pub collapsed: bool,
-    pub group_id: i8
+    pub group_id: i16
 }
 
 impl Tile {

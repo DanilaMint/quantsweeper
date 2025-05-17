@@ -27,7 +27,7 @@ export class WasmHook {
 
         // Проверка и корректировка числовых значений
         result.width = Math.min(Math.max(Math.round(result.width || defaults.width), 5), 30);
-        result.height = Math.min(Math.max(Math.round(result.height || defaults.height), 5), 30);
+        result.height = Math.min(Math.max(Math.round(result.height || defaults.height), 5), 22);
         result.groups = Math.min(Math.max(result.groups || defaults.groups, 1), 100);
 
         const minCandidates = result.groups;

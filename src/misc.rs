@@ -6,7 +6,7 @@ pub trait MiscMethods {
     fn get_tile(&self, x: i32, y: i32) -> Option<&Tile>;
     fn get_mut_tile(&mut self, x: i32, y: i32) -> Option<&mut Tile>;
     fn coords_to_index(&self, x: i32, y: i32) -> Option<usize>;
-    fn get_group_elements(&self, group_id : i8) -> Vec<(i32, i32)>;
+    fn get_group_elements(&self, group_id : i16) -> Vec<(i32, i32)>;
     fn around_prob_sum(&self, x : i32, y : i32) -> Result<Prob, String>;
     fn set_tile_status(&mut self, x: i32, y: i32, status: TileStatus);
     fn is_win(&self) -> bool;
@@ -34,7 +34,7 @@ impl MiscMethods for Field {
         return None;
     }
 
-    fn get_group_elements(&self, group_id : i8) -> Vec<(i32, i32)> {
+    fn get_group_elements(&self, group_id : i16) -> Vec<(i32, i32)> {
         let mut group = Vec::new();
         let (width, height) = (self.width, self.height);
         for y in 0..height as i32 {
