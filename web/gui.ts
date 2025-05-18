@@ -39,7 +39,12 @@ export class GUI {
         $('#start-game').on('click', _ => this.startNewGame());
         $('#show-tip').on('click', _ => this.showPopup('tip-popup'));
         $('#hide-tip').on('click', _ => this.hidePopup());
-        $(document).on('keydown', e => this.handleKeyboard(e));
+        
+        $(document.body)
+          .attr('tabindex', '0')
+          .css('outline', 'none') // Убираем outline при фокусе
+          .trigger('focus')
+          .on('keydown', e => this.handleKeyboard(e));
     }
 
     private handleKeyboard(event : JQuery.KeyDownEvent): void {
@@ -54,7 +59,7 @@ export class GUI {
                 this.setTool(ToolType.QuantFlag); break;
 
             case 'r':
-                this.startNewGame(); break;
+                this.showPopup('new-game-popup'); break;
 
             case 'e':
                 this.onMeasure.emit(); break;
