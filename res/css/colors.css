@@ -1,0 +1,10 @@
+:root {
+    --text: #111;
+    --field-bg: #eee;
+    --leftpanel-bg: #eee;
+
+    --screen-split: #bbb;
+
+    --counter-bg: #ccc;
+    --counter-outline: #aaa;
+}

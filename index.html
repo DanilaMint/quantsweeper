@@ -1,86 +1,68 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuantSweeper</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Quant Sweeper</title>
+    <!-- Загрузка стилей -->
+    <link rel="stylesheet" href="res/css/field.css">
+    <link rel="stylesheet" href="res/css/leftpanel.css">
+    <link rel="stylesheet" href="res/css/styles.css">
+    <link rel="stylesheet" href="res/css/tiles.css">
+    <link rel="stylesheet" href="res/css/colors.css">
+    <link rel="stylesheet" href="res/css/popup.css">
     <link rel="shortcut icon" href="res/icon.svg" type="image/x-icon">
 </head>
 <body>
-    <div id="preload" style="display:flex;width:90%;max-width:1200px;height:90%;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.1);background-color:#fff;overflow:hidden;">
-        <div style="margin: auto; display: flexbox;">
-            <h1 style="text-align: center;">Подождите, движок загружается...</h1>
-            <h2 id="wasm-warn" style="display: none;">Похоже, ваш браузер не поддерживает WebAssembly код.</h2>
-        </div>
-        <script src="web/preload.js"></script>
-    </div>
-
-    <div class="container" id="app" style="display: none;">
+    <div class="app">
         <div class="left-panel">
-            <!--div class="score">Счет: <span id="score">0</span> </div-->
-            <div class="score">Квантовые флажки: <span id="quant-flag-count"></span></div>
-            <button id="new-game" class="button">Новая игра</button>
-            <div class="tool-selector">
-                <button id="tool-shovel" class="button active">Лопата</button>
-                <button id="tool-simple-flag" class="button">Обычный флажок</button>
-                <button id="tool-quant-flag" class="button">Квантовый флажок</button>
+            <div class="counter">
+                <span>Quantum flags: &nbsp;</span><span id="quant-flag-count">0</span>
             </div>
-            <button id="measure" class="button">Измерить (коллапсировать)</button>
-            <button id="show-tip" class="bottom-element button">Инструкция</button>
-    </div>
-        <div class="right-panel">
-            <div id="game-board"></div>
+            <div class="toolbar">
+                <div id="tool-shovel" class="tool active">Shovel</div>
+                <div id="classic-flag" class="tool">Classic Flag</div>
+                <div id="quant-flag" class="tool">Quant Flag</div>
+            </div>
+            <div id="collapse" class="btn">Collpase</div>
+            <div id="new-game" class="btn">New Game</div>
+            <div id="instruction" class="btn">How to play</div>
         </div>
+        <div class="game-frame"><div id="game-field"></div></div>
+    </div>
+    <div comment="Popups">
+        <div class="popup-overlay" id="popup-new-game">
+            <div class="popup-content">
+                <h2>Game Settings</h2>
+                <label for="width">Width (5-30):</label>
+                <input type="number" name="width" id="width" max="30" min="5" value="10">
+                <label for="height">Height (5-22):</label>
+                <input type="number" name="height" id="height" max="22" min="5" value="10">
+                <label for="width">Quantum Mines (%):</label>
+                <input type="number" name="groups" id="groups" max="100" min="0" value="7">
+                <label for="width">Uncertainty Factor (%):</label>
+                <input type="number" name="candidates" id="candidates" max="100" min="0" value="18">
+
+                <div class="btn" id="start-game">Start Game</div>
+            </div>
+        </div>
+        <div class="popup-overlay" id="popup-instruction">
+            <div class="popup-content">
+                <h2>Instruction</h2>
+                <p>
+                    &bull; All mines in superposition - are at several tiles<br>
+                    &bull; Probability is equal 1 / mine-linked tile count<br>
+                    &bull; Tiles show sum of probabilities around<br>
+                    &bull; After collapse all mine go to random linked tile<br>
+                    &bull; To safety collapse tile use quantum flag and "Collapse" button<br>
+                    &bull; You will win, when all tiles are opened and all mines was collapsed and marked classic flags<br>
+                    &bull; Quantum Mines - percent of mines from total tiles count <br>
+                    &bull; Uncertainty Factor - percent of tiles that will be distributed to mines from total tiles count <br>
+                </p>
+            </div>
+    </div>
     </div>
 
-    <div id="overlay" class="overlay"></div>
-    
-    <div id="new-game-popup" class="popup">
-        <div class="popup-content">
-            <h2>Настройки игры</h2>
-            <label for="width">Ширина (5-30):</label>
-            <input type="number" id="width" min="5" max="30" value="10">
-            
-            <label for="height">Высота (5-22):</label>
-            <input type="number" id="height" min="5" max="22" value="10">
-            
-            <label for="groups">Группы (%):</label>
-            <input type="number" id="groups" min="0" max="100" value="10">
-            
-            <label for="candidates">Кандидаты (%):</label>
-            <input type="number" id="candidates" min="0" max="100" value="20">
-            
-            <button id="start-game" class="button" style="margin-top: 10px;">Начать игру</button>
-        </div>
-    </div>
-
-    <div id="tip-popup" class="popup" style="width: 400px;">
-        <div class="popup-content">
-            <h2>Инструкция</h2>
-            <p>
-                &bull; Мины находятся в суперпозиции - находятся на нескольких клетках сразу<br>
-                &bull; При коллапсе или открытии клетки, принадлежащей мине, мина становится на одну из её клеток<br>
-                &bull; Параметр "Группы" - процент квантовых мин от общего числа клеток<br>
-                &bull; Параметр "Кандидаты" - количество клеток, распределенных минам от общего их числа<br>
-                &bull; Вероятность мины на клетке равняется 1/кол-во клеток, принадлежащих мине<br>
-                &bull; Клетка показывает сумму вероятностей мины у клеток вокруг<br>
-                &bull; Чтобы безопасно сколлапсировать мину на клетке, используется квантовый флажок и кнопка "Измерить"<br>
-                &bull; Победа достигается, когда все клетки открыты и все мины (в сколлапсированном состоянии) помечены обычными флажками<br>
-            </p>
-            <h3>Управление</h3>
-            <p>
-                &bull; <b>1</b> - Выбрать лопату<br>
-                &bull; <b>2</b> - Выбрать обычный флажок<br>
-                &bull; <b>3</b> - Выбрать квантовый флажок<br>
-                &bull; <b>E</b> - Сколлапсировать флажки<br>
-                &bull; <b>R</b> - Новая игра<br>
-                &bull; <b>H</b> - Показать инструкцию<br>
-            </p>
-            <button id="hide-tip" class="button">Закрыть</button>
-        </div>
-    </div>
-    
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="dist/app.min.js"></script>
 </body>

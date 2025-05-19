@@ -1,0 +1,48 @@
+.tile {
+    display: flex;
+    height: var(--tile-size);
+    width: var(--tile-size);
+    border-radius: calc(var(--tile-size) * 0.15);
+    background-color: red;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
+
+.tile-closed {
+    background-color: #bbb;
+    outline: calc(var(--tile-size) / 15) solid #999;
+    outline-offset: calc(var(--tile-size) / -15);
+
+    transition: 
+        background-color 0.3s ease,
+        outline 0.3s ease,
+        outline-offset 0.3s ease,
+        background-image 0.3s ease;
+}
+
+.tile-opened {
+    background-color: #eee;
+    outline: calc(var(--tile-size) / 15) solid #bbb;
+    outline-offset: calc(var(--tile-size) / -15);
+    font-size: calc(var(--tile-size) * 0.4);
+    cursor: default;
+}
+
+.tile-flag {
+    background-image: url(../tiles/flag.svg);
+}
+
+.tile-quant {
+    background-image: url(../tiles/quant.svg);
+}
+
+.tile-mine {
+    color: #0000;
+    background-image: url(../tiles/mine.svg);
+}
+
+.right-flag {
+    background-image: url(../tiles/rightpos.svg);
+}

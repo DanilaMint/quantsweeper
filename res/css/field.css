@@ -1,0 +1,22 @@
+.game-frame {
+    width: calc(100vw - var(--leftpanel-width));
+    height: 100vh;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    background-color: var(--field-bg);
+    justify-items: center;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+#game-field {
+    width: auto;
+    height: auto;
+}
+
+.tile-row {
+    height: var(--tile-size);
+    width: 100%;
+    display: flex;
+}

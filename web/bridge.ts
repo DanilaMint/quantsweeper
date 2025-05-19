@@ -1,18 +1,52 @@
-import { debugMessage, GameConfig } from './static';
+//import { debugMessage, GameConfig } from './static';
 import init, { GameEngine, TileStatus, ToolType } from '../pkg/quantswepeer.js';
-import { GUI } from "./gui";
+import { DOMManager } from './dom';
+//import { GUI } from "./gui";
+
+import { FieldManager } from './field';
+import { GameConfig } from './types';
+
+function debugMessage(msg : string): void {
+    if (true) console.log(msg);
+}
 
 const gcd = (a : number, b : number) => {if (!b) {return a;}return gcd(b, a % b)};
 
 export class WasmHook {
     private engine : GameEngine;
-    private gui : GUI;
+    //private gui : GUI;
+    private field: FieldManager;
+    private dom : DOMManager
 
     constructor() {
         this.engine = new GameEngine();
-        this.gui = new GUI();
-        this.handleMethods();
-        this.gui.showPopup('new-game-popup');
+        this.field = new FieldManager((x : number, y : number) => {
+            this.engine.handleTileInteraction(x, y);
+            this.renderField();
+        });
+
+        const onCollapse = () => {
+            this.engine.collapseQuantFlags();
+            this.renderField();
+        };
+
+        const onNewGame = config => {
+            debugMessage(config);
+            config = this.validateConfig(config);
+            debugMessage(config);
+            this.engine.startNewGame(
+                config.width, 
+                config.height, 
+                config.groups / 100, 
+                config.candidates / 100
+            );
+            this.field.createBoard(config.width, config.height);
+            this.dom.popupManager.closePopup();
+            this.renderField();
+        }
+
+        this.dom = new DOMManager(onCollapse, tool => this.engine.changeTool(tool), onNewGame);
+        this.dom.popupManager.showNewGamePopup();
     }
     
     private validateConfig(config: GameConfig): GameConfig {
@@ -40,57 +74,30 @@ export class WasmHook {
         return result;
     }
 
-    private handleMethods() {
-        this.gui.onNewGame.connect(config => {
-            debugMessage(config);
-            config = this.validateConfig(config);
-            debugMessage(config);
-            this.engine.startNewGame(
-                config.width, 
-                config.height, 
-                config.groups / 100, 
-                config.candidates / 100
-            );
-            this.gui.createGameBoard(config.width, config.height);
-            this.renderField();
-        });
-        this.gui.onCellInteract.connect(pos => {
-            this.engine.handleTileInteraction(pos.x, pos.y);
-            this.renderField();
-        });
-        this.gui.onMeasure.connect(() => {
-            this.engine.collapseQuantFlags();
-            this.renderField();
-        });
-        this.gui.onToolChanged.connect(tool => {
-            this.engine.changeTool(tool);
-        });
-    }
-
     private renderField(): void {
         if (!this.engine.hasFieldNow) return;
 
-        this.gui.setQuantFlagCount(this.engine.getQuantFlagCount);
+        this.dom.setQuantFlags(this.engine.getQuantFlagCount);
 
         for (let y = 0; y < this.engine.fieldHeight; y++) {
             for (let x = 0; x < this.engine.fieldWidth; x++) {
+                this.field.clearTile(x, y);
                 switch (this.engine.getTileStatus(x, y)) {
                     case TileStatus.None:
-                        this.gui.setCellClosed(x, y);
+                        this.field.setTileClosed(x, y);
                         break;
                     case TileStatus.Flag: 
-                        if (this.engine.isGameOver && this.engine.isTileMine(x, y)) this.gui.setCellRightFlag(x, y);
-                        else this.gui.setCellSimpleFlag(x, y);
+                        if (this.engine.isGameOver && this.engine.isTileMine(x, y)) this.field.setTileRightFlag(x, y);
+                        else this.field.setTileFlag(x, y);
                         break;
                     case TileStatus.QuantFlag:
-                        this.gui.setCellQuantFlag(x, y); 
+                        this.field.setTileQuantFlag(x, y);
                         break;
                     case TileStatus.Opened:
-                        if (this.engine.isTileMine(x, y)) this.gui.setCellMine(x, y);
+                        if (this.engine.isTileMine(x, y)) this.field.setTileMine(x, y);
                         else {
                             const frac = this.reduceFrac(this.engine.getProbabilityAroundTile(x, y));
-                            debugMessage(frac);
-                            this.gui.setCellOpened(x, y, frac.num, frac.den);
+                            this.field.setTileOpened(x, y, frac.num, frac.den);
                         };
                         break;
                 }

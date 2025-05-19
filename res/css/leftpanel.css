@@ -1,0 +1,75 @@
+.left-panel {
+    display: flexbox;
+    width: var(--leftpanel-width);
+    height: 100vh;
+    overflow-y: hidden;
+    background-color: var(--leftpanel-bg);
+    justify-content: center;
+    border-right: 4px solid var(--screen-split);
+}
+
+.counter {
+    display: flex;
+    margin: 10px;
+    width: calc(var(--leftpanel-width) * 0.9);
+    height: 45px;
+    border-radius: 4px;
+    background-color: var(--counter-bg);
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    outline: 2px solid var(--counter-outline);
+}
+
+.toolbar {
+    width: auto;
+    height: 64px;
+    margin: 10px;
+    display: flex;
+}
+
+.tool {
+    display: flex;
+    width: 64px;
+    height: 64px;
+    margin: auto;
+    background-color: #bbb;
+    border-radius: 4px;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    cursor: pointer;
+
+    transition: 
+        background-color 0.3s ease;
+}
+
+#tool-shovel.active {
+    background-color: #ddd;
+}
+
+#classic-flag.active {
+    background-color: #d55;
+}
+
+#quant-flag.active {
+    background-color: #5C54C4;
+}
+
+.btn {
+    display: flex;
+    background-color: #bbb;
+    border-radius: 4px;
+    width: auto;
+    margin: 10px;
+    height: 40px;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    transition: background-color 0.25s ease;
+}
+
+.btn:hover {
+    background-color: #aaa;
+    cursor: pointer;
+}
