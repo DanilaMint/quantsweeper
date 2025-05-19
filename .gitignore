@@ -12,5 +12,3 @@ target/
 Cargo.lock
 
 package-lock.json
-
-web/lang.ts

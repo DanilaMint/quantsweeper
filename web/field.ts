@@ -1,81 +1,73 @@
 export class FieldManager {
-    private readonly field : JQuery<HTMLElement>;
-    private onTileInteract : ( x : number, y : number ) => void;
+    private readonly field: JQuery<HTMLElement>;
+    private readonly onTileInteract: (x: number, y: number) => void;
 
-    constructor(onTileInteract : ( x : number, y : number ) => void) {
+    constructor(onTileInteract: (x: number, y: number) => void) {
         this.field = $('#game-field');
         this.onTileInteract = onTileInteract;
     }
 
-    private getTile(x : number, y : number): JQuery<HTMLElement> {
+    // ==================== Private Methods ====================
+    private getTile(x: number, y: number): JQuery<HTMLElement> {
         return $(`.tile[x="${x}"][y="${y}"]`);
     }
 
-    private setTileFraction(x : number, y : number, numerator : number, denominator : number): void {
-        let content = '';
-        if (numerator != 0) {
-            if (denominator == 1) {
-                content = numerator.toString();
-            }
-            else {
-                content = `${numerator}/${denominator}`;
-            }
-        }
+    private setTileContent(x: number, y: number, numerator: number, denominator: number = 1): void {
+        const content = numerator === 0 ? '' : 
+                      denominator === 1 ? numerator.toString() : 
+                      `${numerator}/${denominator}`;
+        
         this.getTile(x, y).text(content);
     }
 
-    public createBoard(width : number, height : number): void {
-        this.field.html('');
-        for (let y = 0; y < height; y++) {
-            const row = $('<div class="tile-row"></div>');
-            for (let x = 0; x < width; x++) {
-                const tile = $(`<div class="tile tile-closed" x="${x}" y="${y}"></div>`);
-                tile.on('click', _ => this.onTileInteract(x, y));
-
-                row.append(tile);
-            }
-            this.field.append(row);
-        }
+    private updateTileClasses(x: number, y: number, classesToAdd: string[], classesToRemove: string[] = []): void {
+        const tile = this.getTile(x, y);
+        tile.removeClass(classesToRemove.join(' '));
+        tile.addClass(classesToAdd.join(' '));
     }
 
-    public clearTile(x : number, y : number): void {
-        const tile = this.getTile(x, y);
-        tile.removeClass();
-        tile.addClass('tile');
+    // ==================== Public Methods ====================
+    public createBoard(width: number, height: number): void {
+        this.field.empty();
+        
+        const rows = Array.from({ length: height }, (_, y) => 
+            $('<div class="tile-row"></div>').append(
+                Array.from({ length: width }, (_, x) => 
+                    $(`<div class="tile tile-closed" x="${x}" y="${y}"></div>`)
+                        .on('click', () => this.onTileInteract(x, y))
+                )
+            )
+        );
+
+        this.field.append(rows);
     }
 
-    public setTileClosed(x : number, y : number): void {
-        const tile = this.getTile(x, y);
-        tile.addClass('tile-closed');
+    public resetTile(x: number, y: number): void {
+        this.updateTileClasses(x, y, ['tile'], ['tile-closed', 'tile-opened', 'tile-flag', 'tile-quant', 'tile-mine', 'right-flag']);
     }
 
-    public setTileOpened(x : number, y : number, numerator : number = 0, denominator : number = 1): void {
-        const tile = this.getTile(x, y);
-        tile.addClass('tile-opened');
-        this.setTileFraction(x, y, numerator, denominator);
+    public setTileClosed(x: number, y: number): void {
+        this.updateTileClasses(x, y, ['tile', 'tile-closed']);
     }
 
-    public setTileMine(x : number, y : number): void {
-        const tile = this.getTile(x, y);
-        tile.addClass('tile-opened');
-        tile.addClass('tile-mine');
+    public setTileOpened(x: number, y: number, numerator: number = 0, denominator: number = 1): void {
+        this.updateTileClasses(x, y, ['tile', 'tile-opened']);
+        this.setTileContent(x, y, numerator, denominator);
     }
 
-    public setTileFlag(x : number, y : number): void {
-        const tile = this.getTile(x, y);
-        tile.addClass('tile-closed');
-        tile.addClass('tile-flag');
+    public setTileMine(x: number, y: number): void {
+        this.updateTileClasses(x, y, ['tile', 'tile-opened', 'tile-mine']);
     }
 
-    public setTileRightFlag(x : number, y : number): void {
-        const tile = this.getTile(x, y);
-        tile.addClass('tile-closed');
-        tile.addClass('right-flag');
+    public setTileFlag(x: number, y: number): void {
+        this.updateTileClasses(x, y, ['tile', 'tile-closed', 'tile-flag']);
     }
 
-    public setTileQuantFlag(x : number, y : number): void {
-        const tile = this.getTile(x, y);
-        tile.addClass('tile-closed');
-        tile.addClass('tile-quant');
+    public setTileRightFlag(x: number, y: number): void {
+        this.updateTileClasses(x, y, ['tile', 'tile-closed', 'right-flag']);
+    }
+
+    public setTileQuantFlag(x: number, y: number): void {
+        this.updateTileClasses(x, y, ['tile', 'tile-closed', 'tile-quant']);
     }
 }

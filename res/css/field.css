@@ -1,4 +1,5 @@
 .game-frame {
+    display: flex;
     width: calc(100vw - var(--leftpanel-width));
     height: 100vh;
     overflow-y: scroll;

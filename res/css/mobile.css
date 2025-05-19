@@ -1,0 +1,72 @@
+@media only screen and (max-width: 768px) {
+    /**/
+    :root {
+        --tile-size: 25px;
+        --leftpanel-width: 200px;
+    }
+
+    .app {
+        flex-direction: column;
+    }
+
+    .left-panel {
+        width: 100vw;
+        height: var(--leftpanel-width);
+        border-right: none;
+        border-bottom: 4px solid var(--screen-split);
+    }
+
+    .mobile-compress {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .counter {
+        margin: 7px;
+        width: 90%;
+        height: 36px;
+        border-radius: 3px;
+    }
+
+    .toolbar {
+        height: 48px;
+        margin: 7px;
+        font-size: 8px;
+    }
+
+    .tool {
+        width: 48px;
+        height: 48px;
+        border-radius: 3px;
+        margin: 4px;
+    }
+
+    .btn {
+        width: 45%;
+        height: 30px;
+        margin: 7px;
+    }
+
+    #start-game.btn {
+        width: 80%;
+    }
+
+    #collapse.btn {
+
+    }
+
+    .popup-content {
+        max-width: 350px;
+    }
+
+    .game-frame {
+        width: 100vw;
+        height: calc(100vh - var(--leftpanel-width) - 4px);
+    }
+
+    input[type="number"] {
+        height: 22px;
+        font-size: 13px;
+    }
+}

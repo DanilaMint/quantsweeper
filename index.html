@@ -11,36 +11,41 @@
     <link rel="stylesheet" href="res/css/tiles.css">
     <link rel="stylesheet" href="res/css/colors.css">
     <link rel="stylesheet" href="res/css/popup.css">
+    <link rel="stylesheet" href="res/css/mobile.css">
     <link rel="shortcut icon" href="res/icon.svg" type="image/x-icon">
 </head>
 <body>
     <div class="app">
         <div class="left-panel">
             <div class="counter">
-                <span>Quantum flags: &nbsp;</span><span id="quant-flag-count">0</span>
+                <span id="quant-flags">Quantum flags: &nbsp;</span><span id="quant-flag-count">0</span>
             </div>
-            <div class="toolbar">
-                <div id="tool-shovel" class="tool active">Shovel</div>
-                <div id="classic-flag" class="tool">Classic Flag</div>
-                <div id="quant-flag" class="tool">Quant Flag</div>
+            <div class="mobile-compress">
+                <div class="toolbar">
+                    <div id="tool-shovel" class="tool active">Shovel</div>
+                    <div id="classic-flag" class="tool">Classic Flag</div>
+                    <div id="quant-flag" class="tool">Quant Flag</div>
+                </div>
+                <div id="collapse" class="btn">Collpase</div>
             </div>
-            <div id="collapse" class="btn">Collpase</div>
-            <div id="new-game" class="btn">New Game</div>
-            <div id="instruction" class="btn">How to play</div>
+            <div class="mobile-compress">
+                <div id="new-game" class="btn">New Game</div>
+                <div id="instruction" class="btn">How to play</div>
+            </div>
         </div>
         <div class="game-frame"><div id="game-field"></div></div>
     </div>
     <div comment="Popups">
         <div class="popup-overlay" id="popup-new-game">
             <div class="popup-content">
-                <h2>Game Settings</h2>
-                <label for="width">Width (5-30):</label>
+                <h2 id="settings-header">Game Settings</h2>
+                <label for="width" id="lwidth">Width (5-30):</label>
                 <input type="number" name="width" id="width" max="30" min="5" value="10">
-                <label for="height">Height (5-22):</label>
+                <label for="height" id="lheight">Height (5-22):</label>
                 <input type="number" name="height" id="height" max="22" min="5" value="10">
-                <label for="width">Quantum Mines (%):</label>
+                <label for="width" id="lgroups">Quantum Mines (%):</label>
                 <input type="number" name="groups" id="groups" max="100" min="0" value="7">
-                <label for="width">Uncertainty Factor (%):</label>
+                <label for="width" id="lcand">Uncertainty Factor (%):</label>
                 <input type="number" name="candidates" id="candidates" max="100" min="0" value="18">
 
                 <div class="btn" id="start-game">Start Game</div>
@@ -48,12 +53,12 @@
         </div>
         <div class="popup-overlay" id="popup-instruction">
             <div class="popup-content">
-                <h2>Instruction</h2>
-                <p>
+                <h2 id="instruction-header">Instruction</h2>
+                <p id="instruction-text">
                     &bull; All mines in superposition - are at several tiles<br>
                     &bull; Probability is equal 1 / mine-linked tile count<br>
                     &bull; Tiles show sum of probabilities around<br>
-                    &bull; After collapse all mine go to random linked tile<br>
+                    &bull; After collapse mine go to random linked tile<br>
                     &bull; To safety collapse tile use quantum flag and "Collapse" button<br>
                     &bull; You will win, when all tiles are opened and all mines was collapsed and marked classic flags<br>
                     &bull; Quantum Mines - percent of mines from total tiles count <br>

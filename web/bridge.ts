@@ -81,7 +81,7 @@ export class WasmHook {
 
         for (let y = 0; y < this.engine.fieldHeight; y++) {
             for (let x = 0; x < this.engine.fieldWidth; x++) {
-                this.field.clearTile(x, y);
+                this.field.resetTile(x, y);
                 switch (this.engine.getTileStatus(x, y)) {
                     case TileStatus.None:
                         this.field.setTileClosed(x, y);

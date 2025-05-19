@@ -3,17 +3,14 @@ import { GameConfig } from "./types";
 import { PopupManager } from "./popup";
 
 export class DOMManager {
-    // Callbacks
     private readonly onCollapse: () => void;
     private readonly onToolChanging: (tool: ToolType) => void;
     private readonly onStartingGame: (config: GameConfig) => void;
 
-    // DOM Elements
     private readonly tools: Record<ToolType, JQuery<HTMLElement>>;
     private readonly quantFlags: JQuery<HTMLElement>;
     public readonly popupManager: PopupManager;
 
-    // Constants
     private static readonly TOOL_IDS = {
         [ToolType.Shovel]: '#tool-shovel',
         [ToolType.SimpleFlag]: '#classic-flag',
@@ -41,7 +38,6 @@ export class DOMManager {
         this.initializeEventHandlers();
     }
 
-    // ==================== Public Methods ====================
     public setQuantFlags(value: number): void {
         this.quantFlags.text(value.toString());
     }
