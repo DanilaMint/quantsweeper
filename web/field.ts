@@ -7,7 +7,6 @@ export class FieldManager {
         this.onTileInteract = onTileInteract;
     }
 
-    // ==================== Private Methods ====================
     private getTile(x: number, y: number): JQuery<HTMLElement> {
         return $(`.tile[x="${x}"][y="${y}"]`);
     }
@@ -26,7 +25,6 @@ export class FieldManager {
         tile.addClass(classesToAdd.join(' '));
     }
 
-    // ==================== Public Methods ====================
     public createBoard(width: number, height: number): void {
         this.field.empty();
         

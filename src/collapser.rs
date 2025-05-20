@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use rand::Rng;
 
-use crate::field::Field;
+use crate::field::{Field, DIRECTIONS};
 use crate::misc::MiscMethods;
 use crate::tile::*;
 
@@ -10,8 +10,8 @@ pub trait Collapser {
     fn collapse_group(&mut self, group_id : i16) -> Result<(), String>;
     fn collapse(&mut self, x: i32, y: i32) -> Result<(), String>;
     fn get_tiles_with_quant_flags(&self) -> HashSet<i16>;
-    fn collapse_quant_flag_groups(&mut self, quantum_groups : &HashSet<i16>) -> Result<(), Vec<String>>;
-    fn collapse_quant_flags(&mut self) -> Result<(), String>;
+    fn collapse_quant_flag_groups(&mut self, quantum_groups : &HashSet<i16>) -> Result<Vec<(i32, i32)>, Vec<String>>;
+    fn collapse_quant_flags(&mut self) -> Result<Vec<(i32, i32)>, String> ;
 }
 
 impl Collapser for Field {
@@ -84,8 +84,9 @@ impl Collapser for Field {
         return quantum_groups;
     }
 
-    fn collapse_quant_flag_groups(&mut self, quantum_groups : &HashSet<i16>) -> Result<(), Vec<String>> {
+    fn collapse_quant_flag_groups(&mut self, quantum_groups : &HashSet<i16>) -> Result<Vec<(i32, i32)>, Vec<String>> {
         let mut error_bank : Vec<String> = Vec::new();
+        let mut modificied : Vec<(i32, i32)> = Vec::new();
         for &group_id in quantum_groups {
             if group_id == -1 {
                 for y in 0..self.height as i32 {
@@ -94,6 +95,10 @@ impl Collapser for Field {
                             if tile.status == TileStatus::QuantFlag && tile.group_id == -1 {
                                 tile.collapsed = true;
                                 tile.status = TileStatus::None;
+                            }
+                            modificied.push((x, y));
+                            for (dx, dy) in DIRECTIONS {
+                                modificied.push((x + dx, y + dy));
                             }
                         }
                     }
@@ -109,13 +114,13 @@ impl Collapser for Field {
                 }
             }
         }
-        return Ok(());
+        return Ok(modificied);
     }
 
-    fn collapse_quant_flags(&mut self) -> Result<(), String> {
+    fn collapse_quant_flags(&mut self) -> Result<Vec<(i32, i32)>, String> {
         let quantum_groups = self.get_tiles_with_quant_flags();
-        self.collapse_quant_flag_groups(&quantum_groups)
-            .map_err(|error_bank| error_bank.join("\n"))?;
-        return Ok(());
+
+        return Ok(self.collapse_quant_flag_groups(&quantum_groups)
+            .map_err(|error_bank| error_bank.join("\n"))?);
     }
 }

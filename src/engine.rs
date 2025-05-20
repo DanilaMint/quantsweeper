@@ -1,3 +1,4 @@
+use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::prelude::*;
 
 use crate::{
@@ -36,7 +37,9 @@ struct GameEngine {
     first_click : bool,
     config : Option<GameConfig>,
     is_game_over : bool,
-    current_tool : ToolType
+    current_tool : ToolType,
+
+    field_changes : Vec<(i32, i32)> // оптимизация
 }
 
 #[wasm_bindgen]
@@ -50,7 +53,8 @@ impl GameEngine {
             flag_count: 0,
             first_click: true,
             is_game_over: false,
-            current_tool: ToolType::Shovel
+            current_tool: ToolType::Shovel,
+            field_changes : Vec::new()
         };
     }
     
@@ -85,6 +89,16 @@ impl GameEngine {
         return Ok(self.current_field.as_ref().ok_or(JsValue::from_str(UNDEFINED_FIELD))?.height);
     }
 
+    #[wasm_bindgen(getter, js_name = "fieldChanges")]
+    pub fn field_changes(&self) -> Array {
+        return Array::from_iter(self.field_changes.iter().map(|(x, y)| {
+            let obj = Object::new();
+            Reflect::set(&obj, &"x".into(), &JsValue::from(*x)).unwrap();
+            Reflect::set(&obj, &"y".into(), &JsValue::from(*y)).unwrap();
+            return obj;
+        }));
+    }
+
     // геттеры клеток
     #[wasm_bindgen(js_name = "isTileMine")]
     pub fn is_tile_mine(&self, x : i32, y : i32) -> Result<bool, JsValue> {
@@ -111,10 +125,11 @@ impl GameEngine {
     #[wasm_bindgen(js_name = "startNewGame")]
     pub fn start_new_game(&mut self, width : u32, height : u32, groups : f64, candidates : f64) -> Result<(), JsValue> {
         self.set_config(width, height, groups, candidates);
-        let _ = self.initialize_field();
+        self.initialize_field()?;
         self.flag_count = self.calculate_flag_count()?;
         self.first_click = true;
         self.is_game_over = false;
+        self.field_changes = (0..width*height).map(|i| ((i % width) as i32, (i / width) as i32)).collect();
         return Ok(());
     }
 
@@ -132,7 +147,8 @@ impl GameEngine {
     #[wasm_bindgen(js_name = "collapseQuantFlags")]
     pub fn collapse_quant_flags(&mut self) -> Result<(), JsValue> {
         let field = self.current_field.as_mut().ok_or(UNDEFINED_FIELD)?;
-        field.collapse_quant_flags()?;
+        self.field_changes.clear();
+        self.field_changes.extend(field.collapse_quant_flags()?);
         return Ok(());
     }
 
@@ -145,6 +161,8 @@ impl GameEngine {
     fn open_tile(&mut self, x : i32, y : i32) -> Result<(), String> {
         let config = self.config.as_ref().ok_or(UNDEFINED_CONFIG)?;
         let field = self.current_field.as_mut().ok_or(UNDEFINED_FIELD)?;
+        self.field_changes.clear();
+        self.field_changes.push((x, y));
 
         if self.first_click {
             field.generate(x, y, config.groups, config.candidates)?;
@@ -152,7 +170,7 @@ impl GameEngine {
         }
 
         if !field.open_tile(x, y)? {
-            field.multiopen(x, y)?;
+            self.field_changes.extend(field.multiopen(x, y)?);
         } else {
             self.is_game_over = true;
         }
@@ -161,6 +179,7 @@ impl GameEngine {
     }
 
     fn toggle_flag(&mut self, x : i32, y : i32) -> Result<(), String> {
+        self.field_changes.clear();
         if self.first_click {return Ok(());}
         let field = self.current_field.as_mut().ok_or(UNDEFINED_FIELD)?;
         match field.get_tile(x, y).ok_or(format!("Unfound tile ({}, {})", x, y))?.status {
@@ -184,6 +203,7 @@ impl GameEngine {
                 }
             },
         }
+        self.field_changes.push((x, y));
         return Ok(());
     }
 

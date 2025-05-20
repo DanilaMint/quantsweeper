@@ -9,8 +9,11 @@
     color: var(--text);
 }
 
-body {
-    margin: 0px
+html, body {
+    margin: 0px;
+    padding: 0px;
+    overflow-x: hidden;
+    min-width: 100%;
 }
 
 .app {

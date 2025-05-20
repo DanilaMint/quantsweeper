@@ -79,28 +79,28 @@ export class WasmHook {
 
         this.dom.setQuantFlags(this.engine.getQuantFlagCount);
 
-        for (let y = 0; y < this.engine.fieldHeight; y++) {
-            for (let x = 0; x < this.engine.fieldWidth; x++) {
-                this.field.resetTile(x, y);
-                switch (this.engine.getTileStatus(x, y)) {
-                    case TileStatus.None:
-                        this.field.setTileClosed(x, y);
-                        break;
-                    case TileStatus.Flag: 
-                        if (this.engine.isGameOver && this.engine.isTileMine(x, y)) this.field.setTileRightFlag(x, y);
-                        else this.field.setTileFlag(x, y);
-                        break;
-                    case TileStatus.QuantFlag:
-                        this.field.setTileQuantFlag(x, y);
-                        break;
-                    case TileStatus.Opened:
-                        if (this.engine.isTileMine(x, y)) this.field.setTileMine(x, y);
-                        else {
-                            const frac = this.reduceFrac(this.engine.getProbabilityAroundTile(x, y));
-                            this.field.setTileOpened(x, y, frac.num, frac.den);
-                        };
-                        break;
-                }
+        for (const coord of this.engine.fieldChanges) {
+            const x = coord.x;
+            const y = coord.y;
+            this.field.resetTile(x, y);
+            switch (this.engine.getTileStatus(x, y)) {
+                case TileStatus.None:
+                    this.field.setTileClosed(x, y);
+                    break;
+                case TileStatus.Flag: 
+                    if (this.engine.isGameOver && this.engine.isTileMine(x, y)) this.field.setTileRightFlag(x, y);
+                    else this.field.setTileFlag(x, y);
+                    break;
+                case TileStatus.QuantFlag:
+                    this.field.setTileQuantFlag(x, y);
+                    break;
+                case TileStatus.Opened:
+                    if (this.engine.isTileMine(x, y)) this.field.setTileMine(x, y);
+                    else {
+                        const frac = this.reduceFrac(this.engine.getProbabilityAroundTile(x, y));
+                        this.field.setTileOpened(x, y, frac.num, frac.den);
+                    };
+                    break;
             }
         }
     }

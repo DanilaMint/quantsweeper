@@ -3,6 +3,7 @@
     width: var(--leftpanel-width);
     height: 100vh;
     overflow-y: hidden;
+    overflow-x: hidden;
     background-color: var(--leftpanel-bg);
     justify-content: center;
     border-right: 4px solid var(--screen-split);
