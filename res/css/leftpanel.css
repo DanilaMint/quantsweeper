@@ -104,8 +104,8 @@
 }
 
 span.game-label {
-    position: absolute;
-    margin-top: -10px;
+    position: relative;
+    top: -10px;
 }
 
 

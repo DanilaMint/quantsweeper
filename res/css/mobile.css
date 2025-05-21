@@ -28,7 +28,7 @@
 
     .counter {
         margin: 7px;
-        margin-top: 20px;
+        margin-top: -8px;
         width: 90%;
         height: 34px;
         border-radius: 3px;
@@ -73,6 +73,6 @@
     }
 
     span.game-label {
-        margin-top: -17px;
+        top: -17px;
     }
 }
