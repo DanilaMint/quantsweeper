@@ -89,6 +89,10 @@ QuantSweeper - квантовая версия "Сапёра", где мины �
 - Большие поля корректно отображаются
 - Возвращена предзагрузка
 
+### 1.0.0
+- Релиз стабильной версии
+- Инструменты имеют иконки
+
 #
 <h3 id="eng"></h3>
 
@@ -175,3 +179,7 @@ Key differences from classic Minesweeper:
 - Fixed probability update after collapse
 - Large fields are displayed correctly
 - Preload returned
+
+### 1.0.0
+- Stable version release
+- Instruments have icons

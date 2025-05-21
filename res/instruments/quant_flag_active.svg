@@ -7,5 +7,5 @@
     <circle cx="32" cy="32" r="5.33" fill="black"/>
     </g>
 </mask>
-<path d="M21.33 53.33 L21.33 10.67 L42.67 21.33 L21.33 32" fill="#5C54C4" stroke-width="4.27" stroke="#5C54C4" mask="url(#myMask)"/>
+<path d="M21.33 53.33 L21.33 10.67 L42.67 21.33 L21.33 32" fill="#bbb" stroke-width="4.27" stroke="#bbb" mask="url(#myMask)"/>
 </svg>

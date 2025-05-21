@@ -46,16 +46,30 @@
         background-color 0.3s ease;
 }
 
+#tool-shovel {
+    background-image: url(../instruments/shovel.svg);
+}
+
+#classic-flag {
+    background-image: url(../instruments/simple_flag.svg);
+}
+
+#quant-flag {
+    background-image: url(../instruments/quant_flag.svg);
+}
+
 #tool-shovel.active {
     background-color: var(--tool-shovel-active);
 }
 
 #classic-flag.active {
     background-color: var(--classic-flag-active);
+    background-image: url(../instruments/simple_flag_active.svg);
 }
 
 #quant-flag.active {
     background-color: var(--quant-flag-active);
+    background-image: url(../instruments/quant_flag_active.svg);
 }
 
 .btn {

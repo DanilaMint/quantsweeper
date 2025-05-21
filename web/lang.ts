@@ -39,9 +39,9 @@ export const EN : Lang = {
 
 async function setStrings(data : Lang): Promise<void> {
     $('#quant-flags').text(data.quantum_flags);
-    $('#tool-shovel').text(data.tool_shovel);
-    $('#classic-flag').text(data.classic_flag);
-    $('#quant-flag').text(data.quant_flag);
+    //$('#tool-shovel').text(data.tool_shovel);
+    //$('#classic-flag').text(data.classic_flag);
+    //$('#quant-flag').text(data.quant_flag);
     $('#collapse').text(data.collapse);
     $('#new-game').text(data.new_game);
     $('#instruction').text(data.instruction_button);
