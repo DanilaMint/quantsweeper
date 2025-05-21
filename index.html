@@ -4,68 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quant Sweeper</title>
-    <!-- Загрузка стилей -->
-    <link rel="stylesheet" href="res/css/field.css">
-    <link rel="stylesheet" href="res/css/leftpanel.css">
-    <link rel="stylesheet" href="res/css/styles.css">
-    <link rel="stylesheet" href="res/css/tiles.css">
-    <link rel="stylesheet" href="res/css/colors.css">
-    <link rel="stylesheet" href="res/css/popup.css">
-    <link rel="stylesheet" href="res/css/mobile.css">
-    <link rel="shortcut icon" href="res/icon.svg" type="image/x-icon">
 </head>
 <body>
-    <div class="app">
+    <div id="preload" style="padding: 8px;">
+        <h1>Wait a second, Engine is loading...</h1>
+        <h2 id="wasm-warn" style="display: none;">Sorry, your browser isn't support <strong>WebAssembly</strong></h2>
+        <script src="web/preload.js"></script>
+    </div>
+    <div class="app" id="app" style="display: none;">
         <div class="left-panel">
+            <a class="game-label" href="https://github.com/DanilaKouzmenko/quantsweeper/">
+                <h2 class="game-label">QUANT SWEEPER</h2>
+                <span class="game-label">0.5.3</span>
+            </a>
             <div class="counter">
-                <span id="quant-flags">Quantum flags: &nbsp;</span><span id="quant-flag-count">0</span>
+                <span id="quant-flags"></span><span id="quant-flag-count">0</span>
             </div>
             <div class="mobile-compress">
                 <div class="toolbar">
-                    <div id="tool-shovel" class="tool active">Shovel</div>
-                    <div id="classic-flag" class="tool">Classic Flag</div>
-                    <div id="quant-flag" class="tool">Quant Flag</div>
+                    <div id="tool-shovel" class="tool active"></div>
+                    <div id="classic-flag" class="tool"></div>
+                    <div id="quant-flag" class="tool"></div>
                 </div>
-                <div id="collapse" class="btn">Collpase</div>
+                <div id="collapse" class="btn"></div>
             </div>
             <div class="mobile-compress">
-                <div id="new-game" class="btn">New Game</div>
-                <div id="instruction" class="btn">How to play</div>
+                <div id="new-game" class="btn"></div>
+                <div id="instruction" class="btn"></div>
             </div>
         </div>
         <div class="game-frame"><div id="game-field"></div></div>
     </div>
-    <div comment="Popups">
+    <div id="popups" style="display: none;">
         <div class="popup-overlay" id="popup-new-game">
             <div class="popup-content">
-                <h2 id="settings-header">Game Settings</h2>
-                <label for="width" id="lwidth">Width (5-30):</label>
+                <h2 id="settings-header"></h2>
+                <label for="width" id="lwidth"></label>
                 <input type="number" name="width" id="width" max="30" min="5" value="10">
-                <label for="height" id="lheight">Height (5-22):</label>
-                <input type="number" name="height" id="height" max="22" min="5" value="10">
-                <label for="width" id="lgroups">Quantum Mines (%):</label>
+                <label for="height" id="lheight"></label>
+                <input type="number" name="height" id="height" max="30" min="5" value="10">
+                <label for="width" id="lgroups"></label>
                 <input type="number" name="groups" id="groups" max="100" min="0" value="7">
-                <label for="width" id="lcand">Uncertainty Factor (%):</label>
+                <label for="width" id="lcand"></label>
                 <input type="number" name="candidates" id="candidates" max="100" min="0" value="18">
 
-                <div class="btn" id="start-game">Start Game</div>
+                <div class="btn" id="start-game"></div>
             </div>
         </div>
         <div class="popup-overlay" id="popup-instruction">
             <div class="popup-content">
-                <h2 id="instruction-header">Instruction</h2>
-                <p id="instruction-text">
-                    &bull; All mines in superposition - are at several tiles<br>
-                    &bull; Probability is equal 1 / mine-linked tile count<br>
-                    &bull; Tiles show sum of probabilities around<br>
-                    &bull; After collapse mine go to random linked tile<br>
-                    &bull; To safety collapse tile use quantum flag and "Collapse" button<br>
-                    &bull; You will win, when all tiles are opened and all mines was collapsed and marked classic flags<br>
-                    &bull; Quantum Mines - percent of mines from total tiles count <br>
-                    &bull; Uncertainty Factor - percent of tiles that will be distributed to mines from total tiles count <br>
-                </p>
+                <h2 id="instruction-header"></h2>
+                <p id="instruction-text"></p>
             </div>
     </div>
+    </div>
+
+    <div comment="Styles">
+        <link rel="stylesheet" href="res/css/field.css">
+        <link rel="stylesheet" href="res/css/leftpanel.css">
+        <link rel="stylesheet" href="res/css/styles.css">
+        <link rel="stylesheet" href="res/css/tiles.css">
+        <link rel="stylesheet" href="res/css/colors.css">
+        <link rel="stylesheet" href="res/css/popup.css">
+        <link rel="stylesheet" href="res/css/mobile.css">
+        <link rel="shortcut icon" href="res/icon.svg" type="image/x-icon">
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

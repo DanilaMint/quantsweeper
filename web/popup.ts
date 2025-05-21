@@ -1,30 +1,26 @@
 export class PopupManager {
-    private readonly newGamePopup : JQuery<HTMLElement>;
-    private readonly howToPlayPopup : JQuery<HTMLElement>;
+    private readonly popups = {
+        newGame: $('#popup-new-game'),
+        howToPlay: $('#popup-instruction')
+    };
 
     constructor() {
-        this.newGamePopup = $('#popup-new-game');
-        this.howToPlayPopup = $('#popup-instruction');
         this.initHandles();
     }
 
     private initHandles(): void {
-        this.howToPlayPopup.on('click', _ => this.closePopup());
-        $(document).on('keydown', e => {
-            if (e.key === 'Escape') this.closePopup();
-        });
+        this.popups.howToPlay.on('click', () => this.closePopup());
     }
 
     public closePopup(): void {
-        this.newGamePopup.removeClass('active');
-        this.howToPlayPopup.removeClass('active');
+        Object.values(this.popups).forEach(p => p.removeClass('active'));
     }
 
     public showNewGamePopup(): void {
-        this.newGamePopup.addClass('active');
+        this.popups.newGame.addClass('active');
     }
 
     public showHowToPlayPopup(): void {
-        this.howToPlayPopup.addClass('active');
+        this.popups.howToPlay.addClass('active');
     }
 }

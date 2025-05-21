@@ -7,4 +7,16 @@
 
     --counter-bg: #ccc;
     --counter-outline: #aaa;
+    --tool-bg: #bbb;
+    --tool-shovel-active: #ddd;
+    --classic-flag-active: #d55;
+    --quant-flag-active: #5c54c4;
+
+    --button-bg: #bbb;
+    --button-hover: #aaa;
+
+    --overlay: #000b;
+    --popup-bg: #fff;
+    --label: #555;
+    --input-border: #ddd;
 }

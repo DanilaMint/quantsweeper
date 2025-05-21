@@ -4,7 +4,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: var(--overlay);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,7 +22,7 @@
 .popup-content {
     display: flex;
     flex-direction: column;
-    background: white;
+    background: var(--popup-bg);
     padding: 30px;
     border-radius: 8px;
     max-width: 500px;
@@ -41,7 +41,7 @@ label {
     margin: 8px 0 4px 0;
     text-align: left;
     font-size: 14px;
-    color: #555;
+    color: var(--label);
 }
 
 input[type="number"] {
@@ -51,7 +51,7 @@ input[type="number"] {
     height: 30px;
     margin: 4px 0 12px 0;
     padding: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--input-border);
     border-radius: 4px;
     font-size: 14px;
 }

@@ -1,11 +1,13 @@
-// Предзагрузка страницы, проверяет наличие WASM и запускает игру
+// Предзагрузка страницы, проверяет наличие WASM
 
 document.addEventListener('DOMContentLoaded', _=>{
     if(typeof WebAssembly === "object" && typeof WebAssembly.instantiate === "function") {
         document.getElementById('app').style.display = 'flex';
+        document.getElementById('popups').style.display = 'block';
         document.getElementById('preload').style.display = 'none';
+        console.log(document.getElementById('popups').style.display);
     }
     else{
-        document.getElementById('wasm-warn').style.display = 'static';
+        document.getElementById('wasm-warn').style.display = 'block';
     }
 });

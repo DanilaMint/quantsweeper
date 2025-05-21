@@ -12,6 +12,7 @@
 .counter {
     display: flex;
     margin: 10px;
+    margin-top: 30px;
     width: calc(var(--leftpanel-width) * 0.9);
     height: 45px;
     border-radius: 4px;
@@ -34,7 +35,7 @@
     width: 64px;
     height: 64px;
     margin: auto;
-    background-color: #bbb;
+    background-color: var(--tool-bg);
     border-radius: 4px;
     align-items: center;
     text-align: center;
@@ -46,20 +47,20 @@
 }
 
 #tool-shovel.active {
-    background-color: #ddd;
+    background-color: var(--tool-shovel-active);
 }
 
 #classic-flag.active {
-    background-color: #d55;
+    background-color: var(--classic-flag-active);
 }
 
 #quant-flag.active {
-    background-color: #5C54C4;
+    background-color: var(--quant-flag-active);
 }
 
 .btn {
     display: flex;
-    background-color: #bbb;
+    background-color: var(--button-bg);
     border-radius: 4px;
     width: auto;
     margin: 10px;
@@ -71,6 +72,37 @@
 }
 
 .btn:hover {
-    background-color: #aaa;
+    background-color: var(--button-hover);
     cursor: pointer;
+}
+
+.game-label {
+    position: relative;
+    text-decoration: none;
+    margin-bottom: 10px;
+    background: linear-gradient(-45deg, red, #5c54c4, #d55, #1c3);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradient 15s ease infinite;
+    font-weight: bolder;
+}
+
+span.game-label {
+    position: absolute;
+    margin-top: -10px;
+}
+
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }

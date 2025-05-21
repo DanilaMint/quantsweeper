@@ -54,12 +54,21 @@ pub struct Tile {
 }
 
 impl Tile {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         return Self {
             prob: Prob(0),
             collapsed: false,
             group_id: -1,
             status: TileStatus::None
+        };
+    }
+
+    pub fn from_mine(mine_id : i16, probability : Prob) -> Self {
+        return Self {
+            prob: probability,
+            group_id: mine_id,
+            status: TileStatus::None,
+            collapsed: false
         };
     }
     /* 

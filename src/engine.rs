@@ -7,7 +7,7 @@ use crate::{
     generator::Generator, 
     misc::MiscMethods, 
     opener::TileOpener, 
-    tile::{Prob, TileStatus}
+    tile::*
 };
 
 // ERRORS
@@ -29,6 +29,7 @@ struct GameConfig {
     candidates : f64
 }
 
+const NON_FLAGGED : Tile = Tile::new();
 
 #[wasm_bindgen]
 struct GameEngine {
@@ -162,7 +163,6 @@ impl GameEngine {
         let config = self.config.as_ref().ok_or(UNDEFINED_CONFIG)?;
         let field = self.current_field.as_mut().ok_or(UNDEFINED_FIELD)?;
         self.field_changes.clear();
-        self.field_changes.push((x, y));
 
         if self.first_click {
             field.generate(x, y, config.groups, config.candidates)?;
@@ -172,6 +172,7 @@ impl GameEngine {
         if !field.open_tile(x, y)? {
             self.field_changes.extend(field.multiopen(x, y)?);
         } else {
+            self.field_changes.push((x, y));
             self.is_game_over = true;
         }
 
@@ -226,8 +227,13 @@ impl GameEngine {
     }
 
     fn check_win(&mut self) -> Result<(), &'static str> {
-        if self.current_field.as_ref().ok_or(UNDEFINED_FIELD)?.is_win() {
+        let field = self.current_field.as_ref().ok_or(UNDEFINED_FIELD)?;
+        if field.is_win() {
             self.is_game_over = true;
+            self.field_changes.extend(
+                (0..field.width * field.height).map(|i| ((i % field.width) as i32, (i / field.width) as i32))
+                .filter(|(x, y)| field.get_tile(*x, *y).unwrap_or(&NON_FLAGGED).status == TileStatus::Flag)
+            ); // добавляет в изменения все клетки с флажками
         }
         return Ok(());
     }

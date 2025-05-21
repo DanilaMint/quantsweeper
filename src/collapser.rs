@@ -96,10 +96,10 @@ impl Collapser for Field {
                                 tile.collapsed = true;
                                 tile.status = TileStatus::None;
                             }
-                            modificied.push((x, y));
-                            for (dx, dy) in DIRECTIONS {
-                                modificied.push((x + dx, y + dy));
-                            }
+                        }
+                        modificied.push((x, y));
+                        for (dx, dy) in DIRECTIONS {
+                            modificied.push((x + dx, y + dy));
                         }
                     }
                 }
@@ -110,6 +110,10 @@ impl Collapser for Field {
                 for (x, y) in group_coords {
                     if let Some(tile) = self.get_mut_tile(x, y) {
                         tile.status = TileStatus::None;
+                    }
+                    modificied.push((x, y));
+                    for (dx, dy) in DIRECTIONS {
+                        modificied.push((x + dx, y + dy));
                     }
                 }
             }

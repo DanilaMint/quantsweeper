@@ -3,37 +3,26 @@ import { GameConfig } from "./types";
 import { PopupManager } from "./popup";
 
 export class DOMManager {
-    private readonly onCollapse: () => void;
-    private readonly onToolChanging: (tool: ToolType) => void;
-    private readonly onStartingGame: (config: GameConfig) => void;
-
-    private readonly tools: Record<ToolType, JQuery<HTMLElement>>;
-    private readonly quantFlags: JQuery<HTMLElement>;
-    public readonly popupManager: PopupManager;
-
     private static readonly TOOL_IDS = {
         [ToolType.Shovel]: '#tool-shovel',
         [ToolType.SimpleFlag]: '#classic-flag',
         [ToolType.QuantFlag]: '#quant-flag',
     };
 
+    private readonly tools: Record<ToolType, JQuery<HTMLElement>>;
+    private readonly quantFlags = $('#quant-flag-count');
+    public readonly popupManager = new PopupManager();
+
     constructor(
-        onCollapse: () => void,
-        onToolChanging: (tool: ToolType) => void,
-        onStartingGame: (config: GameConfig) => void
+        private readonly onCollapse: () => void,
+        private readonly onToolChanging: (tool: ToolType) => void,
+        private readonly onStartingGame: (config: GameConfig) => void
     ) {
-        this.onCollapse = onCollapse;
-        this.onToolChanging = onToolChanging;
-        this.onStartingGame = onStartingGame;
-
-        this.tools = {
-            [ToolType.Shovel]: $(DOMManager.TOOL_IDS[ToolType.Shovel]),
-            [ToolType.SimpleFlag]: $(DOMManager.TOOL_IDS[ToolType.SimpleFlag]),
-            [ToolType.QuantFlag]: $(DOMManager.TOOL_IDS[ToolType.QuantFlag]),
-        };
-
-        this.quantFlags = $('#quant-flag-count');
-        this.popupManager = new PopupManager();
+        this.tools = Object.fromEntries(
+            Object.entries(DOMManager.TOOL_IDS).map(([type, id]) => 
+                [Number(type), $(id)] as [ToolType, JQuery<HTMLElement>]
+            )
+        ) as Record<ToolType, JQuery<HTMLElement>>;
 
         this.initializeEventHandlers();
     }
@@ -43,16 +32,12 @@ export class DOMManager {
     }
 
     public readGameConfig(): GameConfig {
-        const getNumericInputValue = (id: string): number => {
-            const value = $(`#${id}`).val();
-            return Number(value);
-        };
-
+        const getNum = (id: string) => Number($(`#${id}`).val());
         return {
-            width: getNumericInputValue('width'),
-            height: getNumericInputValue('height'),
-            groups: getNumericInputValue('groups'),
-            candidates: getNumericInputValue('candidates'),
+            width: getNum('width'),
+            height: getNum('height'),
+            groups: getNum('groups'),
+            candidates: getNum('candidates'),
         };
     }
 
@@ -62,37 +47,27 @@ export class DOMManager {
     }
 
     private setupToolHandlers(): void {
-        Object.entries(this.tools).forEach(([toolType, element]) => {
-            element.on('click', () => this.handleToolChange(Number(toolType) as ToolType));
-        });
+        Object.entries(this.tools).forEach(([type, element]) => 
+            element.on('click', () => this.handleToolChange(Number(type) as ToolType))
+        );
     }
 
     private setupButtonHandlers(): void {
-        $('#collapse').on('click', () => this.onCollapse());
+        $('#collapse').on('click', this.onCollapse);
         $('#new-game').on('click', () => this.popupManager.showNewGamePopup());
-        $('#start-game').on('click', () => this.handleGameStart());
+        $('#start-game').on('click', this.handleGameStart.bind(this));
         $('#instruction.btn').on('click', () => this.popupManager.showHowToPlayPopup());
-        $('');
     }
 
     private handleToolChange(tool: ToolType): void {
         console.log(`Changing tool to ${ToolType[tool]}`);
-        this.deactivateAllTools();
-        this.activateTool(tool);
-        this.onToolChanging(tool);
-    }
-
-    private deactivateAllTools(): void {
-        Object.values(this.tools).forEach(tool => tool.removeClass('active'));
-    }
-
-    private activateTool(tool: ToolType): void {
+        Object.values(this.tools).forEach(t => t.removeClass('active'));
         this.tools[tool].addClass('active');
+        this.onToolChanging(tool);
     }
 
     private handleGameStart(): void {
         this.popupManager.closePopup();
-        const config = this.readGameConfig();
-        this.onStartingGame(config);
+        this.onStartingGame(this.readGameConfig());
     }
 }

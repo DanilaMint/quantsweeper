@@ -10,6 +10,10 @@ function debugMessage(msg : string): void {
     if (true) console.log(msg);
 }
 
+interface Position {
+    x : number, y : number
+};
+
 const gcd = (a : number, b : number) => {if (!b) {return a;}return gcd(b, a % b)};
 
 export class WasmHook {
@@ -61,7 +65,7 @@ export class WasmHook {
 
         // Проверка и корректировка числовых значений
         result.width = Math.min(Math.max(Math.round(result.width || defaults.width), 5), 30);
-        result.height = Math.min(Math.max(Math.round(result.height || defaults.height), 5), 22);
+        result.height = Math.min(Math.max(Math.round(result.height || defaults.height), 5), 30);
         result.groups = Math.min(Math.max(result.groups || defaults.groups, 1), 100);
 
         const minCandidates = result.groups;
@@ -79,7 +83,7 @@ export class WasmHook {
 
         this.dom.setQuantFlags(this.engine.getQuantFlagCount);
 
-        for (const coord of this.engine.fieldChanges) {
+        for (const coord of this.engine.fieldChanges.filter(p => this.posInsideBounds(p))) {
             const x = coord.x;
             const y = coord.y;
             this.field.resetTile(x, y);
@@ -108,6 +112,10 @@ export class WasmHook {
     private reduceFrac(num : number, den : number = 12): {num : number, den : number} {
         const x = gcd(num, den);
         return {num : num / x, den : den / x};
+    }
+
+    private posInsideBounds(pos: Position): boolean {
+        return pos.x >= 0 && pos.x < this.engine.fieldWidth && pos.y >= 0 && pos.y < this.engine.fieldHeight;
     }
 }
 

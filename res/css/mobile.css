@@ -2,7 +2,7 @@
     /**/
     :root {
         --tile-size: 28px;
-        --leftpanel-width: 200px;
+        --leftpanel-width: 220px;
     }
 
     body {
@@ -28,8 +28,9 @@
 
     .counter {
         margin: 7px;
+        margin-top: 20px;
         width: 90%;
-        height: 36px;
+        height: 34px;
         border-radius: 3px;
     }
 
@@ -69,5 +70,9 @@
     input[type="number"] {
         height: 22px;
         font-size: 13px;
+    }
+
+    span.game-label {
+        margin-top: -17px;
     }
 }
