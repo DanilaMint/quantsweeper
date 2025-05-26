@@ -34,13 +34,13 @@ impl MiscMethods for Field {
         return None;
     }
 
-    fn get_group_elements(&self, group_id : i16) -> Vec<(i32, i32)> {
+    fn get_group_elements(&self, mine_id : i16) -> Vec<(i32, i32)> {
         let mut group = Vec::new();
         let (width, height) = (self.width, self.height);
         for y in 0..height as i32 {
             for x in 0..width as i32 {
                 if let Some(tile) = self.get_tile(x as i32, y as i32) {
-                    if tile.group_id == group_id {
+                    if tile.mine_id == mine_id {
                         group.push((x, y));
                     }
                 }

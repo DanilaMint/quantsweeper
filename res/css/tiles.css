@@ -26,7 +26,7 @@
     background-color: #eee;
     outline: calc(var(--tile-size) / 15) solid #bbb;
     outline-offset: calc(var(--tile-size) / -15);
-    font-size: calc(var(--tile-size) * 11 / 30);
+    font-size: calc(var(--tile-size) * 10.5 / 30);
     cursor: default;
 }
 

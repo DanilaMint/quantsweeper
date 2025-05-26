@@ -16,3 +16,7 @@ package-lock.json
 web/engine/
 
 src/new_generator.rs
+
+web/sound_manager.ts
+
+res/audio/

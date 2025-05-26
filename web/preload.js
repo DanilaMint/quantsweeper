@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', _=>{
         document.getElementById('app').style.display = 'flex';
         document.getElementById('popups').style.display = 'block';
         document.getElementById('preload').style.display = 'none';
-        console.log(document.getElementById('popups').style.display);
     }
     else{
         document.getElementById('wasm-warn').style.display = 'block';

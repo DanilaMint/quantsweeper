@@ -1,14 +1,10 @@
 //import { debugMessage, GameConfig } from './static';
-import init, { GameEngine, TileStatus, ToolType } from '../pkg/quantswepeer.js';
+import init, { GameEngine, TileStatus } from '../pkg/quantswepeer.js';
 import { DOMManager } from './dom';
 //import { GUI } from "./gui";
 
 import { FieldManager } from './field';
 import { GameConfig } from './types';
-
-function debugMessage(msg : string): void {
-    if (true) console.log(msg);
-}
 
 interface Position {
     x : number, y : number
@@ -35,9 +31,7 @@ export class WasmHook {
         };
 
         const onNewGame = config => {
-            debugMessage(config);
             config = this.validateConfig(config);
-            debugMessage(config);
             this.engine.startNewGame(
                 config.width, 
                 config.height, 

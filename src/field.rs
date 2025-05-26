@@ -1,6 +1,3 @@
-use rand::rngs::ThreadRng;
-use rand::thread_rng;
-
 use crate::tile::*;
 
 pub const DIRECTIONS : [(i32, i32); 8] = [(1,0), (-1,0), (0,1), (0,-1), (1,1), (1,-1), (-1,1), (-1,-1)];
@@ -8,8 +5,7 @@ pub const DIRECTIONS : [(i32, i32); 8] = [(1,0), (-1,0), (0,1), (0,-1), (1,1), (
 pub struct Field {
     pub width: u32,
     pub height: u32,
-    pub tiles: Vec<Tile>,
-    pub rng : ThreadRng
+    pub tiles: Vec<Tile>
 }
 
 impl Field {
@@ -17,8 +13,7 @@ impl Field {
         return Field {
             width,
             height,
-            tiles: (0..width*height).map(|_| Tile::new()).collect(),
-            rng : thread_rng()
+            tiles: (0..width*height).map(|_| Tile::new()).collect()
         };
-    }    
+    }
 }

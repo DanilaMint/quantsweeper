@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use rand::Rng;
+use fastrand;
 
 use crate::field::{Field, DIRECTIONS};
 use crate::misc::MiscMethods;
@@ -23,31 +23,31 @@ impl Collapser for Field {
             tile.prob = Prob(0);
         }
         else {
-            return Err(format!("Tile ({}, {}) has been already opened or collapsed; collapsed={}, status={:?}", x, y, tile.collapsed, tile.status));
+            return Err(format!("Tile ({}, {}) has been already opened or collapsed;", x, y));
         }
         return Ok(());
     }
 
-    fn collapse_group(&mut self, target_group_id : i16) -> Result<(), String> {
+    fn collapse_group(&mut self, target_mine : i16) -> Result<(), String> {
         let mut matching_indices: Vec<&mut Tile> = self.tiles
-            .iter_mut().filter(|t| t.group_id == target_group_id).collect();
+            .iter_mut().filter(|t| t.mine_id == target_mine).collect();
 
         if matching_indices.is_empty() {
-            return Err(format!("Cant found tiles with that group ({})", target_group_id));
+            return Err(format!("Cant found tiles with that group ({})", target_mine));
         }
         if matching_indices[0].collapsed {
-            return Err(format!("Tiles that group ({}) have been already collapsed.", target_group_id));
+            return Err(format!("Tiles that group ({}) have been already collapsed.", target_mine));
         }
         for tile in &mut matching_indices {
             tile.collapsed = true;
             tile.prob = Prob(0);
         }
-        let mine_index = self.rng.gen_range(0..matching_indices.len());
+        let mine_index = fastrand::usize(0..matching_indices.len());
         if let Some(mine_tile) = matching_indices.get_mut(mine_index) {
             mine_tile.prob = Prob(12);
         }
         else {
-            return Err(format!("Unfound mine candidate in group ({})", target_group_id));
+            return Err(format!("Unfound mine candidate in group ({})", target_mine));
         }
         return Ok(());
     }
@@ -58,13 +58,13 @@ impl Collapser for Field {
             return Err(format!("Tile ({}, {}) has been already collapsed.", x, y));
         }
 
-        let group_id = tile.group_id;
+        let mine_id = tile.mine_id;
 
-        if group_id == -1 {
+        if mine_id == -1 {
             self.collapse_simple_tile(x, y)?;
             return Ok(());
         } else {
-            self.collapse_group(group_id)?;
+            self.collapse_group(mine_id)?;
             return Ok(());
         }
     }
@@ -76,7 +76,7 @@ impl Collapser for Field {
             for x in 0..self.width {
                 if let Some(tile) = self.get_tile(x as i32, y as i32) {
                     if tile.status == TileStatus::QuantFlag {
-                        quantum_groups.insert(tile.group_id);
+                        quantum_groups.insert(tile.mine_id);
                     }
                 }
             }
@@ -92,7 +92,7 @@ impl Collapser for Field {
                 for y in 0..self.height as i32 {
                     for x in 0..self.width as i32 {
                         if let Some(tile) = self.get_mut_tile(x, y) {
-                            if tile.status == TileStatus::QuantFlag && tile.group_id == -1 {
+                            if tile.status == TileStatus::QuantFlag && tile.mine_id == -1 {
                                 tile.collapsed = true;
                                 tile.status = TileStatus::None;
                             }

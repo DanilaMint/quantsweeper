@@ -2,12 +2,7 @@ use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    collapser::Collapser, 
-    field::Field, 
-    generator::Generator, 
-    misc::MiscMethods, 
-    opener::TileOpener, 
-    tile::*
+    collapser::Collapser, field::Field, generator::Generator, misc::MiscMethods, opener::TileOpener, tile::*
 };
 
 // ERRORS
@@ -142,6 +137,15 @@ impl GameEngine {
             _ => self.toggle_flag(x, y)
         }.map_err(|e| JsValue::from(e))?;
         self.check_win()?;
+        if self.is_game_over {
+            let field = self.current_field.as_ref().ok_or(UNDEFINED_FIELD)?;
+            self.field_changes.extend(
+                (0..field.width * field.height).map(|i| ((i % field.width) as i32, (i / field.width) as i32))
+                .filter(|(x, y)| {
+                    let tile = field.get_tile(*x, *y).unwrap_or(&NON_FLAGGED);
+                    return tile.status == TileStatus::Flag && tile.prob >= Prob(12);})
+            ); // добавляет в изменения все клетки с флажками
+        }
         return Ok(());
     }
 
@@ -230,11 +234,45 @@ impl GameEngine {
         let field = self.current_field.as_ref().ok_or(UNDEFINED_FIELD)?;
         if field.is_win() {
             self.is_game_over = true;
-            self.field_changes.extend(
-                (0..field.width * field.height).map(|i| ((i % field.width) as i32, (i / field.width) as i32))
-                .filter(|(x, y)| field.get_tile(*x, *y).unwrap_or(&NON_FLAGGED).status == TileStatus::Flag)
-            ); // добавляет в изменения все клетки с флажками
         }
         return Ok(());
     }
 }
+
+/* 
+fn speed_generators(width : u32, height : u32, groups : f64, candidates : f64) {
+    println!("Сравнение скоростей алгоритмов генерации");
+    println!("Размер поля: {}x{}", width, height);
+    println!("Будет распределено {}% клеток по {}% мин", candidates * 100.0, groups * 100.0);
+    let mut field = Field::new(width, height);
+
+    let start_new = Instant::now();
+    match field.generate(1, 1, groups, candidates) {
+        Ok(_) => {},
+        Err(e) => {println!("Ошибка новой генерации: {}", e); return;}
+    }
+    let new = start_new.elapsed().as_nanos();
+    println!( "Новая генерация: {} наносекунд", new);
+
+    let start_old = Instant::now();
+    match field._generate(1, 1, groups, candidates) {
+        Ok(_) => {}
+        Err(e) => {println!("Ошибка старой генерации: {}", e);return;}
+    }
+    let old = start_old.elapsed().as_nanos();
+    println!( "Старая генерация: {} наносекунд", old );
+
+    println!("Новая генерация на {} быстрее старой", old as f64 / new as f64);
+}
+
+#[test]
+fn speed_test() {
+    println!("--- Стандартные показатели ---");
+    speed_generators(10, 10, 0.08, 0.17);
+    println!("--- Стандартные показатели, но поле максимального размера ---");
+    speed_generators(30, 30, 0.08, 0.17);
+    println!("--- Стандартные показатели усложненного уровня ---");
+    speed_generators(10, 10, 0.15, 0.35);
+    println!("--- Ультрасложность ---");
+    speed_generators(10, 10, 0.6, 0.8);
+}*/
