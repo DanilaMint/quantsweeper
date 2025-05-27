@@ -1,201 +1,26 @@
-# QuantSweeper
+# Quantsweeper
 
-[Open](https://danilakouzmenko.github.io/quantsweeper/)
+[Play the game](https://danilakouzmenko.github.io/quantsweeper/)
 
-[Don't know russian? Read it english!](#eng)
+![Gameplay](./preview_res/gameplay.jpg)
 
-## Правила
+**Short description:** Classic Minesweeper but with quantum mines - right in your browser.
 
-QuantSweeper - квантовая версия "Сапёра", где мины находятся в суперпозиции между несколькими клетками. При открытии клетки с квантовой миной происходит коллапс в одну из возможных позиций. Используйте квантовые флажки для безопасного измерения позиций мин.
+[CHANGELOG](./changelog.md)
 
-Отличия от классической игры:
-- Мины находятся в суперпозиции внутри запутанных "групп" клеток
-- Квантовые флажки позволяют безопасно измерить позиции мин
-- Вероятности показывают возможные расположения мин
+## Features
+- Fully browser-based - no installation required
+- Intuitive mouse and touch controls
+- Responsive design for all devices
 
-## Изменения
+## Technologies
+<p>
+<a href="https://www.typescriptlang.org/"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg" alt="TypeScript" width="64"></a>
+<a href="https://webassembly.org/"><img src="https://upload.wikimedia.org/wikipedia/commons/1/1f/WebAssembly_Logo.svg" alt="WebAssembly" width="64"></a>
+<a href="https://www.rust-lang.org/"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Rust_programming_language_black_logo.svg" alt="Rust" width="64"></a>
+</p>
 
-### 0.1.0
-- Релиз игры
-
-### 0.1.1
-- Фикс бага отображения мины
-- Убрать множественное открытие при мине
-- Добавлен DebugMode
-
-### 0.2.0
-- Проведен рефакторинг Rust-кода: имплементация InternalField разделена на отдельные модули
-- Добавлена валидация вводимых значений
-
-### 0.2.1
-- Валидация не ломается от undefined/NaN
-
-### 0.2.2
-- Исправлен баг с появлением мины на уже открытой клетке
-
-### 0.2.3
-- Исправлен баг пропажи мины после нажатия кнопки "Измерить"
-- Изменен цвет активной лопаты
-
-### 0.2.4
-- Текстуры вынесены в папку `res`
-- Добавлен значок сайта
-- Временно убран счетчик очков
-
-### 0.2.5
-- Добавлена текстура правильно-поставленного флажка
-- Добавлен рендеринг окончания игры
-
-### 0.3.0
-- Вся логика была перенесена в Rust
-- Переименованы методы из `measure` в `collapse`
-- Убран модуль `bytes`
-
-### 0.3.1
-- Добавлен значок сайту
-- Немного сжат предзагрузочный скрипт
-
-### 0.4.0
-- Визуал перенесен на jQuery
-- Предзагрузочный скрипт вынесен в отдельный файл
-
-### 0.4.1
-- Добавлена инструкция к игре
-
-### 0.4.2
-- Убрана возможность поставить флаг на еще не сгенерированное поле
-- Дроби сокращаются
-
-### 0.4.3
-- Идентификаторы групп стали `i16`
-- Добавлено взаимодействие с клавиатуры (`1` - лопата, `2` - обычный флажок, `3` - квантовый флажок, `e` - измерить, `r` - новая игра, `h` - инструкция)
-
-### 0.4.4
-- Исправлен баг с взаимодействием клавиатуры
-- Попап появляется при нажатии `r`
-
-### 0.5.0
-- Полностью переделан GUI
-
-### 0.5.1
-- Возвращен выбор языков
-- Интерфейс сбалансирован для мобильных устройств
-
-### 0.5.2
-- Отпимизирован рендеринг
-
-### 0.5.3
-- Исправлен баг с отсутствием обновления вероятностей после коллапса
-- Большие поля корректно отображаются
-- Возвращена предзагрузка
-
-### 1.0.0
-- Релиз стабильной версии
-- Инструменты имеют иконки
-
-### 1.0.1
-- Исправлено отображение версии в заголовке
-
-### 1.0.2
-- Исправлено перекрашивание флажков при проигрыше
-- Оптимизирован код
-- Оптимизирован размер бандла
-
-#
-<h3 id="eng"></h3>
-
-## Game Rules
-
-QuantSweeper is a quantum version of Minesweeper where mines exist in superposition across multiple tiles. When you reveal a tile with a quantum mine, it collapses to one possible position. Use quantum flags to safely collapse mine superpositions.
-
-Key differences from classic Minesweeper:
-- Mines exist in superposition across a "group" of tiles
-- Quantum flags allow safe measurement of mine positions
-- Probability values show potential mine locations
-
-## Change Log
-
-### 0.1.0
-- Game Release
-
-### 0.1.1
-- Fixed of render mine
-- Removed multiopening if that's mine
-- Added DebugMode
-
-### 0.2.0
-- Rust-code refactoring: implementation `InternalField` split into module components
-- Add input validation
-
-### 0.2.1
-- Validation can process undefined/NaN values
-
-### 0.2.2
-- Fixed mine appearing at already opened tile
-
-### 0.2.3
-- Fixed mine disappearing after press button "Измерить"
-- Changed active shovel color
-
-### 0.2.4
-- Textures are moved to the `res` folder
-- Added icon to game
-- Score counter has been temporarily removed
-
-### 0.2.5
-- Added right-setted flag texture
-- Added game over rendering
-
-### 0.3.0
-- All logic was moved to Rust
-- Renamed methods from `measure` to `collapse`
-- Removed `bytes` module
-
-### 0.3.1
-- Added favicon
-- Compressed preload script
-
-### 0.4.0
-- GUI moved to jQuery
-- Preload script moved into file
-
-### 0.4.1
-- Added instruction
-
-### 0.4.2
-- Fractions are recude
-
-### 0.4.3
-- Group identifiers became `i16`
-- Added keyboard interation (`1` - showel, `2` - simple flag, `3` - quant flag, `e` - measure, `r` - new game, `h` - instruction)
-
-### 0.4.4
-- Fixed keyboard interaction
-- Popup appears after pressing `r`
-
-### 0.5.0
-- GUI fully refactored
-
-### 0.5.1
-- Language selection is returned
-- INterface for mobile devices
-
-### 0.5.2
-- Rendering was optimized
-
-### 0.5.3
-- Fixed probability update after collapse
-- Large fields are displayed correctly
-- Preload returned
-
-### 1.0.0
-- Stable version release
-- Instruments have icons
-
-### 1.0.1
-- Fixed version label rendering
-
-### 1.0.2
-- Fixed flag redraw after game over
-- Code was optimized
-- Bundle size got small to 76 KB
+## Contributing
+We welcome:
+- Bug reports in **Issues**
+- Feature ideas and suggestions
