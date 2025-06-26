@@ -1,6 +1,6 @@
 # Quantsweeper
 
-[Play the game](https://danilakouzmenko.github.io/quantsweeper/)
+[Play the game](https://danilamint.github.io/quantsweeper/)
 
 ![Gameplay](./preview_res/gameplay.jpg)
 
