@@ -1,16 +1,17 @@
-.game-frame {
-    padding: 4px;
+#game-frame {
     display: flex;
-    width: calc(100vw - var(--leftpanel-width));
     height: 100vh;
     background-color: var(--field-bg);
     justify-items: center;
     justify-content: center;
     align-items: center;
     align-content: center;
+    width: 100vw;
+    height: calc(100vh - 229px);
 }
 
 #game-field {
+    margin: 4px;
     width: auto;
     height: auto;
     flex: 0 0 auto;

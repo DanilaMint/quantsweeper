@@ -26,6 +26,7 @@ export class WasmHook {
         });
 
         const onCollapse = () => {
+            console.log("Collapsing!!!");
             this.engine.collapseQuantFlags();
             this.renderField();
         };

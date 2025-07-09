@@ -1,15 +1,15 @@
 # Quantsweeper
 
-[Play the game](https://danilakouzmenko.github.io/quantsweeper/)
+[Play the game](https://t.me/quantsweeperbot/quantsweeper)
 
 ![Gameplay](./preview_res/gameplay.jpg)
 
-**Short description:** Classic Minesweeper but with quantum mines - right in your browser.
+**Short description:** Classic Minesweeper but with quantum mines - in telegram now.
 
 [CHANGELOG](./changelog.md)
 
 ## Features
-- Fully browser-based - no installation required
+- Open Sourse engine
 - Intuitive mouse and touch controls
 - Responsive design for all devices
 

@@ -1,11 +1,1 @@
-<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-<mask id="myMask">
-    <g transform="translate(19 12) scale(0.3)">
-    <rect x="-500" y="-500" width="1000" height="1000" fill="white"/>
-    <ellipse cx="0" cy="0" rx="25.6" ry="9.6" transform="rotate(45),translate(45.25 0)" stroke-width="4" stroke="black" fill="white"/>
-    <ellipse cx="0" cy="0" rx="25.6" ry="9.6" transform="rotate(-45),translate(0 45.25)" stroke-width="4" stroke="black" fill="#0000"/>
-    <circle cx="32" cy="32" r="5.33" fill="black"/>
-    </g>
-</mask>
-<path d="M21.33 53.33 L21.33 10.67 L42.67 21.33 L21.33 32" fill="#bbb" stroke-width="4.27" stroke="#bbb" mask="url(#myMask)"/>
-</svg>
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><mask id="myMask"><g transform="translate(19 12) scale(0.3)"><rect x="-500" y="-500" width="1000" height="1000" fill="white"/><ellipse cx="0" cy="0" rx="25.6" ry="9.6" transform="rotate(45),translate(45.25,0)" stroke-width="4" stroke="black" fill="white"/><ellipse cx="0" cy="0" rx="25.6" ry="9.6" transform="rotate(-45),translate(0,45.25)" stroke-width="4" stroke="black" fill="#0000"/><circle cx="32" cy="32" r="5.33" fill="black"/></g></mask><path d="M21.33 53.33 L21.33 10.67 L42.67 21.33 L21.33 32" fill="#bbb" stroke-width="4.27" stroke="#bbb" mask="url(#myMask)"/></svg>

@@ -1,6 +1,6 @@
 :root {
-    --leftpanel-width: 275px;
-    --tile-size: 30px;
+    --tile-size: 28px;
+    --leftpanel-width: 220px;
 }
 
 * {
@@ -14,14 +14,21 @@ html, body {
     padding: 0px;
     overflow-x: hidden;
     min-width: 100%;
+    overscroll-behavior-x: contain;
 }
 
 .app {
     display: flex;
+    flex-direction: column;
 }
 
 .citate {
     font-family: monospace, Arial, Helvetica, sans-serif;
     font-size: 15px;
-    color: #555;
+    color: var(--label);
+}
+
+.hbox {
+    display: flex;
+    flex-direction: row;
 }

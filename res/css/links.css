@@ -1,0 +1,13 @@
+.outer-link {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 16px;
+    margin: auto;
+    background-color: var(--leftpanel-bg);
+    justify-content: center;
+    align-items: center;
+}
+
+img {
+    margin: 8px;
+}

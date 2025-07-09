@@ -1,75 +1,37 @@
-.left-panel {
+#left-panel {
     display: flexbox;
-    width: var(--leftpanel-width);
-    height: 100vh;
     overflow-y: hidden;
     overflow-x: hidden;
     background-color: var(--leftpanel-bg);
     justify-content: center;
-    border-right: 4px solid var(--screen-split);
+    width: 100vw;
+    height: 225px;
+    border-bottom: 3px solid var(--screen-split);
+}
+
+#left-panel-inner {
+    width: 96%;
+    margin: 0 2% 0 2%;
+    height: 100%;
 }
 
 .counter {
     display: flex;
-    margin: 10px;
-    margin-top: 30px;
-    width: calc(var(--leftpanel-width) * 0.9);
-    height: 45px;
-    border-radius: 4px;
     background-color: var(--counter-bg);
     text-align: center;
     align-items: center;
     justify-content: center;
     outline: 2px solid var(--counter-outline);
+    width: calc(100% - 14px);
+    height: 34px;
+    border-radius: 3px;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    margin: 7px;
 }
 
-.toolbar {
-    width: auto;
-    height: 64px;
-    margin: 10px;
-    display: flex;
-}
-
-.tool {
-    display: flex;
-    width: 64px;
-    height: 64px;
-    margin: auto;
-    background-color: var(--tool-bg);
-    border-radius: 4px;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    cursor: pointer;
-
-    transition: 
-        background-color 0.3s ease;
-}
-
-#tool-shovel {
-    background-image: url(../instruments/shovel.svg);
-}
-
-#classic-flag {
-    background-image: url(../instruments/simple_flag.svg);
-}
-
-#quant-flag {
-    background-image: url(../instruments/quant_flag.svg);
-}
-
-#tool-shovel.active {
-    background-color: var(--tool-shovel-active);
-}
-
-#classic-flag.active {
-    background-color: var(--classic-flag-active);
-    background-image: url(../instruments/simple_flag_active.svg);
-}
-
-#quant-flag.active {
-    background-color: var(--quant-flag-active);
-    background-image: url(../instruments/quant_flag_active.svg);
+.under-ref {
+    margin-top: -20px
 }
 
 .btn {
@@ -77,12 +39,13 @@
     background-color: var(--button-bg);
     border-radius: 4px;
     width: auto;
-    margin: 10px;
-    height: 40px;
     align-items: center;
     text-align: center;
     justify-content: center;
     transition: background-color 0.25s ease;
+    width: 100%;
+    height: 30px;
+    margin: 7px;
 }
 
 .btn:hover {
@@ -105,9 +68,12 @@
 
 span.game-label {
     position: relative;
-    top: -10px;
+    top: -17px;
 }
 
+.btn#collapse {
+    margin: auto 7px auto 7px;
+}
 
 @keyframes gradient {
     0% {

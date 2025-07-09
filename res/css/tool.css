@@ -1,0 +1,42 @@
+.tool {
+    display: flex;
+    background-color: var(--tool-bg);
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    cursor: pointer;
+    width: 48px;
+    height: 48px;
+    border-radius: 3px;
+    margin: 4px;
+    min-width: 48px;
+
+    transition: 
+        background-color 0.3s ease;
+}
+
+#tool-shovel {
+    background-image: url(../instruments/shovel.svg);
+}
+
+#classic-flag {
+    background-image: url(../instruments/simple_flag.svg);
+}
+
+#quant-flag {
+    background-image: url(../instruments/quant_flag.svg);
+}
+
+#tool-shovel.active {
+    background-color: var(--tool-shovel-active);
+}
+
+#classic-flag.active {
+    background-color: var(--classic-flag-active);
+    background-image: url(../instruments/simple_flag_active.svg);
+}
+
+#quant-flag.active {
+    background-color: var(--quant-flag-active);
+    background-image: url(../instruments/quant_flag_active.svg);
+}

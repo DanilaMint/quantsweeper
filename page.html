@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quant Sweeper</title>
+</head>
+<body>
+    <div id="preload" style="padding: 8px;">
+        <h1>Wait a second, Engine is loading...</h1>
+        <h2 id="wasm-warn" style="display: none;">Sorry, your browser isn't support <b>WebAssembly</b></h2>
+        <script src="web/preload.js"></script>
+    </div>
+
+    <div id="app" style="display: none;">
+        <div id="left-panel">
+            <div id="left-panel-inner">
+                <a class="game-label" id="label" href="#">
+                    <h2 class="game-label">QUANT SWEEPER</h2>
+                    <span class="game-label">1.1.0</span>
+                </a>
+                <div class="hbox under-ref">
+                    <div id="new-game" class="btn"></div>
+                    <div id="instruction" class="btn"></div>
+                </div>
+                <div class="counter">
+                    <span id="quant-flags"></span><span id="quant-flag-count">0</span>
+                </div>
+                <div class="hbox">
+                    <div id="tool-shovel" class="tool active"></div>
+                    <div id="classic-flag" class="tool"></div>
+                    <div id="quant-flag" class="tool"></div>
+                    <div id="collapse" class="btn"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="game-frame"><div id="game-field"></div></div>
+    </div>
+
+    <div id="popups">
+        <div class="popup-overlay" id="popup-new-game">
+            <div class="popup-content">
+                <h2 id="settings-header"></h2>
+                <label for="width" id="lwidth"></label>
+                <input type="number" name="width" id="width" max="30" min="5" value="10">
+                <label for="height" id="lheight"></label>
+                <input type="number" name="height" id="height" max="30" min="5" value="10">
+                <label for="width" id="lgroups"></label>
+                <input type="number" name="groups" id="groups" max="100" min="0" value="7">
+                <label for="width" id="lcand"></label>
+                <input type="number" name="candidates" id="candidates" max="100" min="0" value="18">
+
+                <div class="btn" id="start-game"></div>
+            </div>
+        </div>
+        <div class="popup-overlay" id="popup-instruction">
+            <div class="popup-content">
+                <h2 id="instruction-header"></h2>
+                <p id="instruction-text"></p>
+            </div>
+        </div>
+        <div class="popup-overlay" id="popup-links">
+            <div class="popup-content">
+                <h2 id="links-header"></h2>
+                <div class="hbox">
+                    <a class="outer-link" href="https://t.me/matkrieg">
+                        <img src="res/refs/telegram.svg" width="64" height="64">
+                    </a>
+                    <a class="outer-link" href="https://github.com/DanilaMint/quantsweeper">
+                        <img src="res/refs/github.svg" width="64" height="64">
+                    </a>
+                    <a class="outer-link" href="https://www.youtube.com/@danilamint/">
+                        <img src="res/refs/youtube.svg" width="64" height="64">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <link rel="stylesheet" href="res/css/minified.css">
+        <link rel="shortcut icon" href="res/icon.svg" type="image/x-icon">
+    </div>
+
+    <script src="res/jquery.js"></script>
+    <script src="dist/app.min.js"></script>
+</body>
+</html>

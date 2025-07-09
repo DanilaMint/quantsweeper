@@ -11,6 +11,7 @@ export class DOMManager {
 
     private readonly tools: Record<ToolType, JQuery<HTMLElement>>;
     private readonly quantFlags = $('#quant-flag-count');
+    private readonly links = $('#label');
     public readonly popupManager = new PopupManager();
 
     constructor(
@@ -44,6 +45,7 @@ export class DOMManager {
     private initializeEventHandlers(): void {
         this.setupToolHandlers();
         this.setupButtonHandlers();
+        this.setupLinkHandler();
     }
 
     private setupToolHandlers(): void {
@@ -52,8 +54,12 @@ export class DOMManager {
         );
     }
 
+    private setupLinkHandler(): void {
+        this.links.on('click', () => this.popupManager.showLinksPopup());
+    }
+
     private setupButtonHandlers(): void {
-        $('#collapse').on('click', this.onCollapse);
+        $('#collapse').on('click', () => this.onCollapse());
         $('#new-game').on('click', () => this.popupManager.showNewGamePopup());
         $('#start-game').on('click', this.handleGameStart.bind(this));
         $('#instruction.btn').on('click', () => this.popupManager.showHowToPlayPopup());

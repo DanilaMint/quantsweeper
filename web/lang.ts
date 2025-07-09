@@ -1,4 +1,4 @@
-type Fields = 'quantum_flags' | 'tool_shovel' | 'classic_flag' | 'quant_flag' | 'collapse' | 'new_game' | 'instruction_button' | 'game_settings' | 'label_width' | 'label_height' | 'label_mines' | 'label_uncentainty' | 'start_game' | 'instruction_header' | 'instruction';
+type Fields = 'quantum_flags' | 'tool_shovel' | 'classic_flag' | 'quant_flag' | 'collapse' | 'new_game' | 'instruction_button' | 'game_settings' | 'label_width' | 'label_height' | 'label_mines' | 'label_uncentainty' | 'start_game' | 'instruction_header' | 'instruction' | 'links_header';
 type Lang = Record<Fields, string>;
 
 export const RU : Lang = {
@@ -16,7 +16,8 @@ export const RU : Lang = {
     label_uncentainty: "Коэффициент запутанности (%):",
     start_game: "Начать игру",
     instruction_header: "Инструкция",
-    instruction: "&bull; Все мины находятся в суперпозиции - то есть на нескольких клетках сразу<br>&bull; Вероятность равна 1 / <span class=\"citate\">количество присоединенных клеток</span><br>&bull; Клетка показывает сумму вероятностей вокруг<br>&bull; После коллапса мина оказывается на случайной присоединенной клетке<br>&bull; Для безопасного коллапса используйте квантовые флажки и кнопку \"Сколлапсировать\"<br>&bull; Победа будет, когда все клетки открыты, а мины сколлапсированы и помечены обычными флажками<br>&bull; \"Квантовые мины\" - процент мин от общего числа клеток<br>&bull; \"Коэффициент запутанности\" - процент клеток, которые будут распределены минам от общего числа"
+    instruction: "&bull; Все мины находятся в суперпозиции - то есть на нескольких клетках сразу<br>&bull; Вероятность равна 1 / <span class=\"citate\">количество присоединенных клеток</span><br>&bull; Клетка показывает сумму вероятностей вокруг<br>&bull; После коллапса мина оказывается на случайной присоединенной клетке<br>&bull; Для безопасного коллапса используйте квантовые флажки и кнопку \"Сколлапсировать\"<br>&bull; Победа будет, когда все клетки открыты, а мины сколлапсированы и помечены обычными флажками<br>&bull; \"Квантовые мины\" - процент мин от общего числа клеток<br>&bull; \"Коэффициент запутанности\" - процент клеток, которые будут распределены минам от общего числа",
+    links_header: "Разработчик",
 };
 
 export const EN : Lang = {
@@ -34,7 +35,8 @@ export const EN : Lang = {
     label_uncentainty: "Uncertainty Factor (%):",
     start_game: "Start Game",
     instruction_header: "Instruction",
-    instruction: "&bull; All mines in superposition - are at several tiles<br>&bull; Probability is equal 1 / <span class=\"citate\">mine-linked tile count</span><br>&bull; Tiles show sum of probabilities around<br>&bull; After collapse mine go to random linked tile<br>&bull; To safety collapse tile use quantum flag and \"Collapse\" button<br>&bull; ПYou will win, when all tiles are opened and all mines was collapsed and marked classic flags<br>&bull; \"Quantum mines\" - percent of mines from total tiles count<br>&bull; \"Uncertainty Factor\" - percent of tiles that will be distributed to mines from total tiles count"
+    instruction: "&bull; All mines in superposition - are at several tiles<br>&bull; Probability is equal 1 / <span class=\"citate\">mine-linked tile count</span><br>&bull; Tiles show sum of probabilities around<br>&bull; After collapse mine go to random linked tile<br>&bull; To safety collapse tile use quantum flag and \"Collapse\" button<br>&bull; ПYou will win, when all tiles are opened and all mines was collapsed and marked classic flags<br>&bull; \"Quantum mines\" - percent of mines from total tiles count<br>&bull; \"Uncertainty Factor\" - percent of tiles that will be distributed to mines from total tiles count",
+    links_header: "Delevoper",
 };
 
 async function setStrings(data : Lang): Promise<void> {
@@ -52,7 +54,8 @@ async function setStrings(data : Lang): Promise<void> {
     $('#lcand').text(data.label_uncentainty);
     $('#start-game').text(data.start_game);
     $('#instruction-header').text(data.instruction_header);
-    $('#instruction-text').html(data.instruction)
+    $('#instruction-text').html(data.instruction);
+    $('#links-header').text(data.links_header);
 }
 
 export const LANGUAGES: Record<string, Lang> = {

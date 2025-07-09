@@ -1,3 +1,6 @@
+
+extern crate alloc;
+
 mod tile;
 mod engine;
 

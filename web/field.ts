@@ -20,7 +20,7 @@ export class FieldManager {
     }
 
     public createBoard(width: number, height: number): void {
-        const tileSize = Math.min((Math.min($('.game-frame').height(), $('.game-frame').width()) - 8) / height, 35);
+        const tileSize = Math.min((Math.min($('#game-frame').height(), $('#game-frame').width()) - 8) / height, 35);
         this.field.empty().append(
             Array.from({ length: height }, (_, y) => 
                 $('<div class="tile-row"></div>').append(
